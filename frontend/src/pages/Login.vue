@@ -21,29 +21,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 
-const router = useRouter()
-const authStore = useAuthStore()
+const router = useRouter();
+const authStore = useAuthStore();
 
-const email = ref('')
-const password = ref('')
-const loading = ref(false)
-const error = ref('')
+const email = ref('');
+const password = ref('');
+const loading = ref(false);
+const error = ref('');
 
 const handleLogin = async () => {
-  loading.value = true
-  error.value = ''
-  const success = await authStore.login(email.value, password.value)
+  loading.value = true;
+  error.value = '';
+  const success = await authStore.login(email.value, password.value);
   if (success) {
-    router.push('/dashboard')
+    router.push('/dashboard');
   } else {
-    error.value = 'Invalid email or password'
+    error.value = 'Invalid email or password';
   }
-  loading.value = false
-}
+  loading.value = false;
+};
 </script>
 
 <style scoped>

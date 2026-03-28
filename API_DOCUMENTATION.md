@@ -1,11 +1,13 @@
 # Salon POS API Documentation
 
 ## Base URL
+
 ```
 http://localhost:5000/api
 ```
 
 ## Authentication
+
 - All endpoints (except `/auth/login` and `/auth/register`) require JWT token in header
 - Header: `Authorization: Bearer <token>`
 
@@ -16,9 +18,11 @@ http://localhost:5000/api
 ### Authentication
 
 #### POST /auth/login
+
 Login user and return JWT tokens
 
 **Request:**
+
 ```json
 {
   "email": "admin@salon.com",
@@ -27,6 +31,7 @@ Login user and return JWT tokens
 ```
 
 **Response:**
+
 ```json
 {
   "accessToken": "eyJhbGc...",
@@ -41,9 +46,11 @@ Login user and return JWT tokens
 ```
 
 #### POST /auth/refresh
+
 Refresh access token
 
 **Request:**
+
 ```json
 {
   "refreshToken": "eyJhbGc..."
@@ -51,6 +58,7 @@ Refresh access token
 ```
 
 **Response:**
+
 ```json
 {
   "accessToken": "eyJhbGc...",
@@ -59,6 +67,7 @@ Refresh access token
 ```
 
 #### POST /auth/logout
+
 Logout user (invalidate tokens)
 
 ---
@@ -66,15 +75,18 @@ Logout user (invalidate tokens)
 ### User Management
 
 #### GET /users
+
 Get all users (Admin only)
 
 **Query Params:**
+
 - `page`: number (default: 1)
 - `limit`: number (default: 10)
 - `role`: 'admin' | 'employee'
 - `status`: 'active' | 'inactive' | 'disabled'
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -94,9 +106,11 @@ Get all users (Admin only)
 ```
 
 #### POST /users
+
 Create new user (Admin only)
 
 **Request:**
+
 ```json
 {
   "name": "New Employee",
@@ -108,6 +122,7 @@ Create new user (Admin only)
 ```
 
 **Response:**
+
 ```json
 {
   "id": 5,
@@ -119,12 +134,15 @@ Create new user (Admin only)
 ```
 
 #### GET /users/:id
+
 Get user details
 
 #### PATCH /users/:id
+
 Update user details (Admin or self)
 
 **Request:**
+
 ```json
 {
   "name": "Updated Name",
@@ -134,12 +152,15 @@ Update user details (Admin or self)
 ```
 
 #### PATCH /users/:id/disable
+
 Disable user account (Admin only)
 
 #### POST /users/:id/assign-role
+
 Assign role to user (Admin only)
 
 **Request:**
+
 ```json
 {
   "role": "admin"
@@ -151,15 +172,18 @@ Assign role to user (Admin only)
 ### Service Management
 
 #### GET /services
+
 Get all services
 
 **Query Params:**
+
 - `category_id`: number
 - `is_active`: 1 | 0
 - `page`: number
 - `limit`: number
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -178,9 +202,11 @@ Get all services
 ```
 
 #### POST /services
+
 Create new service (Admin only)
 
 **Request:**
+
 ```json
 {
   "name": "Hair Cut",
@@ -194,23 +220,29 @@ Create new service (Admin only)
 ```
 
 #### GET /services/:id
+
 Get service details
 
 #### PATCH /services/:id
+
 Update service (Admin only)
 
 #### PATCH /services/:id/disable
+
 Disable service (Admin only)
 
 ---
 
 #### GET /service-categories
+
 Get all service categories
 
 #### POST /service-categories
+
 Create service category (Admin only)
 
 **Request:**
+
 ```json
 {
   "name": "Hair",
@@ -223,9 +255,11 @@ Create service category (Admin only)
 ### Task Management
 
 #### GET /tasks
+
 Get tasks (filter by role and location)
 
 **Query Params:**
+
 - `employee_id`: number
 - `date`: YYYY-MM-DD
 - `status`: 'pending' | 'in_progress' | 'completed' | 'cancelled'
@@ -233,6 +267,7 @@ Get tasks (filter by role and location)
 - `limit`: number
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -262,9 +297,11 @@ Get tasks (filter by role and location)
 ```
 
 #### POST /tasks
+
 Create new task (Employee creates own task)
 
 **Request:**
+
 ```json
 {
   "serviceId": 1,
@@ -284,12 +321,15 @@ Create new task (Employee creates own task)
 ```
 
 #### GET /tasks/:id
+
 Get task details
 
 #### PATCH /tasks/:id
+
 Update task
 
 **Request (partial update):**
+
 ```json
 {
   "status": "completed",
@@ -299,9 +339,11 @@ Update task
 ```
 
 #### GET /tasks/:id/performance
+
 Get employee performance summary
 
 **Response:**
+
 ```json
 {
   "employeeId": 2,
@@ -323,9 +365,11 @@ Get employee performance summary
 ### Commission Management
 
 #### GET /commissions/:employeeId/:month
+
 Get commission report for employee in month
 
 **Response:**
+
 ```json
 {
   "employeeId": 2,
@@ -348,14 +392,17 @@ Get commission report for employee in month
 ### Reports
 
 #### GET /reports/sales
+
 Get sales report
 
 **Query Params:**
+
 - `startDate`: YYYY-MM-DD
 - `endDate`: YYYY-MM-DD
 - `groupBy`: 'day' | 'week' | 'month'
 
 **Response:**
+
 ```json
 {
   "startDate": "2025-03-01",
@@ -374,13 +421,16 @@ Get sales report
 ```
 
 #### GET /reports/employees
+
 Get employee performance report
 
 **Query Params:**
+
 - `month`: YYYY-MM
 - `sortBy`: 'revenue' | 'tasks' | 'commission'
 
 **Response:**
+
 ```json
 {
   "month": "2025-03",
@@ -397,9 +447,11 @@ Get employee performance report
 ```
 
 #### GET /reports/services
+
 Get service popularity report
 
 **Response:**
+
 ```json
 {
   "period": "month",
@@ -422,12 +474,15 @@ Get service popularity report
 ### Invoices
 
 #### POST /invoices
+
 Create invoice
 
 #### GET /invoices
+
 Get invoices list
 
 #### PATCH /invoices/:id/void
+
 Void an invoice
 
 ---
@@ -435,15 +490,19 @@ Void an invoice
 ### Inventory
 
 #### POST /inventory/products
+
 Add product
 
 #### GET /inventory/batches
+
 Get batch list
 
 #### POST /inventory/purchase
+
 Record purchase entry
 
 #### GET /inventory/alerts
+
 Get low stock and expiry alerts
 
 ---
@@ -453,12 +512,15 @@ Get low stock and expiry alerts
 ### Customers
 
 #### GET /customers
+
 Get customers list
 
 #### POST /customers
+
 Create customer
 
 #### GET /customers/:id
+
 Get customer profile
 
 ---
@@ -466,6 +528,7 @@ Get customer profile
 ## Error Responses
 
 ### 400 Bad Request
+
 ```json
 {
   "error": "Validation failed",
@@ -474,6 +537,7 @@ Get customer profile
 ```
 
 ### 401 Unauthorized
+
 ```json
 {
   "error": "Unauthorized",
@@ -482,6 +546,7 @@ Get customer profile
 ```
 
 ### 403 Forbidden
+
 ```json
 {
   "error": "Forbidden",
@@ -490,6 +555,7 @@ Get customer profile
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "error": "Not found",
@@ -498,6 +564,7 @@ Get customer profile
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "error": "Internal server error",
@@ -508,6 +575,7 @@ Get customer profile
 ---
 
 ## Status Codes
+
 - `200`: Success
 - `201`: Created
 - `400`: Bad Request
@@ -520,6 +588,7 @@ Get customer profile
 ---
 
 ## Rate Limiting
+
 - Login endpoint: 5 requests per minute per IP
 - General endpoints: 100 requests per minute per user
 

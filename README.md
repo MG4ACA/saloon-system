@@ -3,11 +3,13 @@
 A comprehensive Point-of-Sale system built for modern salons. Built with Vue.js 3, Express.js, and MySQL.
 
 ## Project Status
+
 🚀 **Week 0: Project Setup** (In Progress)
 
 ## 📋 Quick Start
 
 ### Prerequisites
+
 - Node.js 16+
 - MySQL 8.0+
 - npm or yarn
@@ -15,16 +17,19 @@ A comprehensive Point-of-Sale system built for modern salons. Built with Vue.js 
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
 cd salon-system
 ```
 
 2. **Install backend dependencies**
+
 ```bash
 npm install
 ```
 
 3. **Install frontend dependencies**
+
 ```bash
 cd frontend
 npm install
@@ -32,22 +37,26 @@ cd ..
 ```
 
 4. **Set up environment variables**
+
 ```bash
 cp .env.example .env
 # Edit .env with your database credentials
 ```
 
 5. **Set up database**
+
 ```bash
 npm run migrate
 ```
 
 6. **Start backend server**
+
 ```bash
 npm run dev
 ```
 
 7. **Start frontend (in another terminal)**
+
 ```bash
 cd frontend
 npm run dev
@@ -103,6 +112,7 @@ salon-system/
 ## 🎯 Project Phases
 
 ### Phase 1: Core Operations (4-5 weeks)
+
 - ✅ User authentication & role management
 - ✅ Service management
 - ✅ Employee task management
@@ -111,12 +121,14 @@ salon-system/
 - ✅ Security & audit logs
 
 ### Phase 2: POS & Inventory (3-4 weeks)
+
 - [ ] Billing system
 - [ ] Batch-wise inventory management
 - [ ] Inventory reports
 - [ ] Expense management
 
 ### Phase 3: Customer Management (2-3 weeks)
+
 - [ ] Customer profiles
 - [ ] Customer reports
 - [ ] Multi-location foundation
@@ -126,6 +138,7 @@ salon-system/
 ## 🛠️ Technology Stack
 
 ### Frontend
+
 - **Vue.js 3** - Progressive JavaScript framework
 - **Vite** - Next-gen build tool
 - **Pinia** - State management
@@ -136,6 +149,7 @@ salon-system/
 - **jsPDF** - PDF export
 
 ### Backend
+
 - **Express.js** - Web framework
 - **Node.js** - JavaScript runtime
 - **MySQL 8.0** - Relational database
@@ -144,6 +158,7 @@ salon-system/
 - **Joi** - Data validation
 
 ### DevOps
+
 - **Docker** (optional)
 - **PM2** - Process manager (production)
 - **Git** - Version control
@@ -153,32 +168,38 @@ salon-system/
 ## 🔑 Key Features
 
 ### User Management
+
 - Role-based access control (Admin, Employee)
 - Secure JWT authentication
 - User activity audit logs
 
 ### Service Management
+
 - Service categories and pricing
 - Commission rule configuration
 - Service package bundles
 
 ### Task Management
+
 - Employee self-entry for tasks
 - Real-time task status tracking
 - Performance metrics
 
 ### Commission System
+
 - Automatic commission calculation
 - Percentage and fixed commission support
 - Monthly commission reports
 
 ### Reporting
+
 - Sales reports (daily, monthly)
 - Employee performance metrics
 - Commission tracking
 - Service popularity analysis
 
 ### Security
+
 - JWT token-based authentication
 - Soft delete implementation
 - Audit logging
@@ -190,6 +211,7 @@ salon-system/
 ## 📊 Database
 
 ### Key Tables
+
 - `users` - User accounts
 - `employees` - Employee profiles
 - `services` - Service offerings
@@ -205,6 +227,7 @@ For detailed schema, see `database/schema.sql`
 ## 🚀 Deployment
 
 ### Hostinger VPS Setup
+
 ```bash
 # Install Node.js and MySQL on VPS
 # Clone repository
@@ -217,6 +240,7 @@ pm2 start server.js --name salon-pos
 ```
 
 ### Database Backup
+
 ```bash
 # Automatic daily backups
 # Configure backup schedule in cron
@@ -247,6 +271,7 @@ Proprietary - Salon POS System
 ## 🆘 Support
 
 For issues and questions, refer to:
+
 - PROJECT_PLAN.md - Implementation details
 - API_DOCUMENTATION.md - API reference
 - Database schema comments - SQL documentation

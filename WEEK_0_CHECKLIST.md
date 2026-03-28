@@ -1,6 +1,7 @@
 # Week 0: Project Setup Checklist ✅
 
 ## Overview
+
 Week 0 focuses on setting up the complete project structure, database schema, API documentation, and environment configuration. This ensures a solid foundation for Phase 1 development.
 
 ---
@@ -8,11 +9,13 @@ Week 0 focuses on setting up the complete project structure, database schema, AP
 ## ✅ Completed Tasks
 
 ### 1. Git Repository Setup
+
 - [x] Initialize Git repository
 - [x] Create comprehensive .gitignore
 - [x] Git ready for commits
 
 ### 2. Frontend Setup (Vue 3 + Vite)
+
 - [x] Create `frontend/` directory structure
 - [x] Set up `package.json` with required dependencies
 - [x] Configure `vite.config.js`
@@ -31,6 +34,7 @@ Week 0 focuses on setting up the complete project structure, database schema, AP
 - [x] Create `index.html`
 
 ### 3. Backend Setup (Express.js)
+
 - [x] Create `server.js` entry point
 - [x] Configure Express basic setup with middleware
 - [x] Create `server/config/database.js` (MySQL connection pool)
@@ -43,6 +47,7 @@ Week 0 focuses on setting up the complete project structure, database schema, AP
   - [x] Utils
 
 ### 4. Database Schema
+
 - [x] Create comprehensive `database/schema.sql`
 - [x] Designed 16 tables:
   - [x] `users` - User accounts with roles
@@ -67,11 +72,13 @@ Week 0 focuses on setting up the complete project structure, database schema, AP
 - [x] Insert default data (locations, roles)
 
 ### 5. Database Migration
+
 - [x] Create `database/migrate.js` script
 - [x] Can run with: `npm run migrate`
 - [x] Handles database creation and schema setup
 
 ### 6. Environment Configuration
+
 - [x] Create `.env` (development)
 - [x] Create `.env.example` (template)
 - [x] Configure:
@@ -83,6 +90,7 @@ Week 0 focuses on setting up the complete project structure, database schema, AP
   - [x] Logging configuration
 
 ### 7. Root Package.json
+
 - [x] Create `package.json` for backend
 - [x] Define all backend dependencies
 - [x] Add npm scripts:
@@ -91,6 +99,7 @@ Week 0 focuses on setting up the complete project structure, database schema, AP
   - [x] `npm run migrate` - Run migrations
 
 ### 8. Documentation
+
 - [x] Create `README.md` - Project overview
 - [x] Create `API_DOCUMENTATION.md` - Complete API reference
 - [x] Create `PROJECT_PLAN.md` - Detailed implementation plan
@@ -152,6 +161,7 @@ salon-system/
 ## 🔧 Next Steps (Week 1 - Phase 1 Start)
 
 ### Week 1: Authentication System
+
 - [ ] Implement authentication routes:
   - [ ] POST `/api/auth/register` (admin only)
   - [ ] POST `/api/auth/login`
@@ -164,6 +174,7 @@ salon-system/
 - [ ] Test login flow end-to-end
 
 ### Week 1-2: User & Role Management
+
 - [ ] Create user CRUD endpoints
 - [ ] Implement role assignment
 - [ ] Create employee management interface
@@ -172,6 +183,7 @@ salon-system/
 - [ ] Frontend: Build employee add/edit modal
 
 ### Week 2: Service Management
+
 - [ ] Create service category endpoints
 - [ ] Create service CRUD endpoints
 - [ ] Implement commission rule configuration
@@ -183,21 +195,25 @@ salon-system/
 ## ⚙️ Configuration Details
 
 ### Database Connection
+
 - Host: localhost (default)
 - User: root (default)
 - Database: salon_pos
 - Connection pool size: 10
 
 ### Authentication
+
 - JWT expiry: 15 minutes
 - Refresh token expiry: 7 days
 - Hash algorithm: bcryptjs
 
 ### Frontend Server
+
 - Port: 3000
 - API proxy: /api → http://localhost:5000/api
 
 ### Backend Server
+
 - Port: 5000
 - Environment: development
 - Logging: debug level
@@ -207,6 +223,7 @@ salon-system/
 ## 🚀 Running the Application
 
 ### Terminal 1 - Start Backend
+
 ```bash
 cd /c/Mithuranga/saloon-system
 npm install
@@ -215,12 +232,14 @@ npm run dev
 ```
 
 ### Terminal 2 - Set up Database
+
 ```bash
 npm run migrate
 # Creates database and all tables
 ```
 
 ### Terminal 3 - Start Frontend
+
 ```bash
 cd frontend
 npm install
@@ -233,6 +252,7 @@ npm run dev
 ## 📊 Database Status
 
 ### Schema: ✅ Complete
+
 - 18 tables designed
 - Relationships defined
 - Indexes created
@@ -240,6 +260,7 @@ npm run dev
 - Audit logging structure ready
 
 ### Migration: ✅ Ready
+
 - Script created: `database/migrate.js`
 - Can be run anytime to set up database
 - Handles duplicate prevention
@@ -262,19 +283,20 @@ npm run dev
 
 ## 📝 Documentation Created
 
-| Document | Purpose | Location |
-|----------|---------|----------|
-| README.md | Project overview | Root |
-| PROJECT_PLAN.md | Implementation plan with phases | Root |
-| API_DOCUMENTATION.md | Complete API reference | Root |
-| WEEK_0_CHECKLIST.md | Week 0 completion checklist | Root |
-| schema.sql | Database schema | database/ |
+| Document             | Purpose                         | Location  |
+| -------------------- | ------------------------------- | --------- |
+| README.md            | Project overview                | Root      |
+| PROJECT_PLAN.md      | Implementation plan with phases | Root      |
+| API_DOCUMENTATION.md | Complete API reference          | Root      |
+| WEEK_0_CHECKLIST.md  | Week 0 completion checklist     | Root      |
+| schema.sql           | Database schema                 | database/ |
 
 ---
 
 ## ✨ What's Ready to Go
 
 ✅ **Frontend**
+
 - Vue 3 project structure ready
 - Router configured
 - State management (Pinia) setup
@@ -282,18 +304,21 @@ npm run dev
 - Login page template
 
 ✅ **Backend**
+
 - Express server structure ready
 - Database connection configured
 - JWT middleware placeholder ready
 - Error handling middleware setup
 
 ✅ **Database**
+
 - Complete schema designed
 - Migration script ready
 - Performance indexes defined
 - Default data inserted
 
 ✅ **Documentation**
+
 - API specs complete
 - Implementation plan detailed
 - Database documented

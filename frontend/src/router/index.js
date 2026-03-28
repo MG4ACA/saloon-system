@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 
 const routes = [
   {
@@ -42,23 +42,23 @@ const routes = [
     path: '/',
     redirect: '/dashboard',
   },
-]
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-})
+});
 
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore()
+  const authStore = useAuthStore();
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next('/login')
+    next('/login');
   } else if (to.meta.requiresAdmin && authStore.user?.role !== 'admin') {
-    next('/dashboard')
+    next('/dashboard');
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;

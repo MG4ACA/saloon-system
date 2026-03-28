@@ -23,11 +23,11 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '../stores/auth'
-import { computed } from 'vue'
+import { computed } from 'vue';
+import { useAuthStore } from '../stores/auth';
 
-const authStore = useAuthStore()
-const userName = computed(() => authStore.user?.name || 'User')
+const authStore = useAuthStore();
+const userName = computed(() => authStore.user?.name || 'User');
 </script>
 
 <style scoped>

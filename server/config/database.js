@@ -1,7 +1,7 @@
-import mysql from 'mysql2/promise'
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
+import mysql from 'mysql2/promise';
 
-dotenv.config()
+dotenv.config();
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
@@ -13,10 +13,10 @@ const pool = mysql.createPool({
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelayMs: 0,
-})
+});
 
 export const getConnection = async () => {
-  return pool.getConnection()
-}
+  return pool.getConnection();
+};
 
-export default pool
+export default pool;
