@@ -138,9 +138,9 @@ const seed = async () => {
     for (const u of USERS) {
       const hash = await bcrypt.hash(u.password, 10);
       const [res] = await conn.query(
-        `INSERT IGNORE INTO users (name, email, password_hash, role, status, is_deleted, location_id)
-         VALUES (?, ?, ?, ?, 'active', 0, ?)`,
-        [u.name, u.email, hash, u.role, LOCATION_ID],
+        `INSERT IGNORE INTO users (name, email, password_hash, role, status, is_deleted)
+         VALUES (?, ?, ?, ?, 'active', 0)`,
+        [u.name, u.email, hash, u.role],
       );
       if (res.insertId) {
         userIds[u.email] = res.insertId;
