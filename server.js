@@ -38,6 +38,7 @@ import categoryRoutes from './server/routes/categories.js';
 import commissionRoutes from './server/routes/commissions.js';
 import customerRoutes from './server/routes/customers.js';
 import packageRoutes from './server/routes/packages.js';
+import reportRoutes from './server/routes/reports.js';
 import serviceRoutes from './server/routes/services.js';
 import taskRoutes from './server/routes/tasks.js';
 import userRoutes from './server/routes/users.js';
@@ -50,6 +51,7 @@ app.use('/api/packages', packageRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/commissions', commissionRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

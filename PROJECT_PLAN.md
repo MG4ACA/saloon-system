@@ -145,33 +145,17 @@ Develop a comprehensive Salon Point-of-Sale (POS) system built for daily salon o
 - [x] 24-hour auto-lock mechanism
 - [x] `NewTask.vue`, `Tasks.vue`, `taskService.js`
 
-#### 1.7 Commission Management — 🔵 Week 4 (IN PROGRESS)
+#### 1.7 Commission Management — ✅ Week 4 (COMPLETE)
 
-**Rules Engine:**
+- [x] `commissions` table (UNIQUE on task_id, idempotent upserts)
+- [x] `Commission.js` model: `calculate()` (%, fixed, LKR 0 if no rule), `upsert()`, `getMonthly()`, `getMonthlySummary()`
+- [x] Auto-calc commission when task status → `completed` (non-fatal, never blocks task)
+- [x] `GET /api/commissions/summary` (employee: own month), `GET /api/commissions` (admin: any employee/month)
+- [x] `Commissions.vue` — month/year filter, 3 summary cards, per-service DataTable, admin employee selector
+- [x] Dashboard "This Month's Commission" card wired to real data
+- [x] Navbar Commissions link (all authenticated users)
 
-- [ ] Commission per service (% or fixed)
-- [ ] After-discount toggle
-- [ ] Auto-calculation on task completion
-
-**Reporting:**
-
-- [ ] Monthly commission report
-- [ ] Employee earnings summary
-- [ ] Commission breakdown by service
-
-**Backend:**
-
-- [ ] Commission calculation logic
-- [ ] GET `/api/commissions/:employee_id/:month`
-- [ ] Commission report generation
-
-**Frontend:**
-
-- [ ] Commission summary widget
-- [ ] Monthly commission report
-- [ ] Employee earnings view
-
-#### 1.8 Reports & Analytics (5-6 days)
+#### 1.8 Reports & Analytics — 🔵 Week 5 (IN PROGRESS)
 
 **Sales Reports:**
 
