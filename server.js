@@ -25,7 +25,8 @@ app.get('/api/health', (req, res) => {
 });
 
 // Import routes (to be added during Phase 1)
-// app.use('/api/auth', authRoutes)
+import authRoutes from './routes/auth.js';
+app.use('/api/auth', authRoutes);
 // app.use('/api/users', userRoutes)
 // app.use('/api/services', serviceRoutes)
 // app.use('/api/tasks', taskRoutes)

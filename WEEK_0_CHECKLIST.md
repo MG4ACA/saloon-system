@@ -162,15 +162,16 @@ salon-system/
 
 ### Week 1: Authentication System
 
-- [ ] Implement authentication routes:
-  - [ ] POST `/api/auth/register` (admin only)
-  - [ ] POST `/api/auth/login`
-  - [ ] POST `/api/auth/refresh`
-  - [ ] POST `/api/auth/logout`
-- [ ] Create authentication middleware
-- [ ] Implement JWT token generation and validation
-- [ ] Add password hashing with bcryptjs
-- [ ] Create user controller
+- [x] Implement authentication routes:
+  - [x] POST `/api/auth/register` (admin only)
+  - [x] POST `/api/auth/login`
+  - [x] POST `/api/auth/refresh`
+  - [x] POST `/api/auth/logout`
+- [x] Create authentication middleware
+- [x] Implement JWT token generation and validation
+- [x] Add password hashing with bcryptjs
+- [x] Create user model with MySQL
+- [x] Create user controller
 - [ ] Test login flow end-to-end
 
 ### Week 1-2: User & Role Management
