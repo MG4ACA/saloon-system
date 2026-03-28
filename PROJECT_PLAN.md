@@ -166,21 +166,18 @@ Develop a comprehensive Salon Point-of-Sale (POS) system built for daily salon o
 - [x] Date range DatePicker (default: current month), `reportService.js`
 - [ ] PDF/CSV export — deferred to later sprint
 
-#### 1.9 Security & Controls — 🔵 Week 6 (IN PROGRESS)
+#### 1.9 Security & Controls — ✅ Week 6 (COMPLETE)
 
-**Already implemented:**
 - [x] RBAC enforcement — `authenticateToken` + `requireAdmin` on all protected routes
-- [x] Rate limiting — `authLimiter` on `/api/auth` (express-rate-limit)
+- [x] Rate limiting — `authLimiter` on `/api/auth`
 - [x] Input validation & XSS protection — Joi schemas on all mutating endpoints
 - [x] SQL injection prevention — parameterized queries throughout
-- [x] Auto-lock past data — 24-hour lock on tasks (backend enforced)
+- [x] Auto-lock past data — 24-hour lock on tasks
+- [x] Audit logging middleware — writes to `audit_logs` table (fire-and-forget)
+- [x] Soft-delete enforcement — all controllers use `setActive` (no hard DELETEs)
+- [x] Manual backup script — `npm run backup` → timestamped SQL dump in `backups/`
 
-**To implement:**
-- [ ] Audit logging middleware — log user, action, table, old/new data, IP, timestamp to `audit_logs` table
-- [ ] Soft-delete enforcement — ensure all DELETE operations set `is_deleted=1` (review existing routes)
-- [ ] Manual DB backup script — `npm run backup` dumps SQL to timestamped file
-
-#### 1.10 UI/UX & Polish (3-4 days)
+#### 1.10 UI/UX & Polish — 🔵 Week 7 (IN PROGRESS)
 
 - [ ] Responsive design across devices
 - [ ] Loading states & error messages

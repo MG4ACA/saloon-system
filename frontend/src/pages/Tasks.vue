@@ -38,7 +38,7 @@
         </template>
       </Column>
       <Column field="price" header="Price">
-        <template #body="{ data }">₹{{ Number(data.price).toFixed(2) }}</template>
+        <template #body="{ data }">LKR {{ Number(data.price).toFixed(2) }}</template>
       </Column>
       <Column header="Start">
         <template #body="{ data }">{{ formatTime(data.start_time) }}</template>
@@ -63,6 +63,7 @@
               size="small"
               severity="info"
               outlined
+              aria-label="Start task"
               @click="changeStatus(data, 'in_progress')"
             />
             <Button
@@ -72,7 +73,8 @@
               size="small"
               severity="success"
               outlined
-              @click="changeStatus(data, 'completed')"
+              aria-label="Mark task complete"
+              @click="confirmComplete(data)"
             />
             <Button
               v-if="['pending','in_progress'].includes(data.status) && !data.is_locked"
@@ -81,7 +83,8 @@
               size="small"
               severity="danger"
               outlined
-              @click="changeStatus(data, 'cancelled')"
+              aria-label="Cancel task"
+              @click="confirmCancel(data)"
             />
           </div>
         </template>
@@ -97,14 +100,16 @@ import DataTable from 'primevue/datatable';
 import DatePicker from 'primevue/datepicker';
 import Select from 'primevue/select';
 import Tag from 'primevue/tag';
+import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import taskService from '../services/taskService';
 import api from '../services/api';
 
-const toast = useToast();
-const auth  = useAuthStore();
+const confirm = useConfirm();
+const toast   = useToast();
+const auth    = useAuthStore();
 const isAdmin = computed(() => auth.user?.role === 'admin');
 
 const tasks          = ref([]);
@@ -173,6 +178,30 @@ const changeStatus = async (task, status) => {
     const msg = e.response?.data?.error || 'Failed to update status';
     toast.add({ severity: 'error', summary: 'Error', detail: msg, life: 4000 });
   }
+};
+
+const confirmComplete = (task) => {
+  confirm.require({
+    message: 'Mark this task as completed? This will calculate the commission.',
+    header: 'Complete Task',
+    icon: 'pi pi-check-circle',
+    acceptLabel: 'Complete',
+    rejectLabel: 'Not yet',
+    acceptClass: 'p-button-success',
+    accept: () => changeStatus(task, 'completed'),
+  });
+};
+
+const confirmCancel = (task) => {
+  confirm.require({
+    message: 'Are you sure you want to cancel this task? This cannot be undone.',
+    header: 'Cancel Task',
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'Yes, cancel it',
+    rejectLabel: 'Keep task',
+    acceptClass: 'p-button-danger',
+    accept: () => changeStatus(task, 'cancelled'),
+  });
 };
 
 onMounted(async () => {

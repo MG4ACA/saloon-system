@@ -25,8 +25,8 @@
 
           <!-- Price -->
           <div class="col-12 md:col-6 field">
-            <label>Price (₹) *</label>
-            <InputNumber v-model="form.price" :min="0" mode="decimal" :max-fraction-digits="2" class="w-full" />
+            <label for="task-price">Price (LKR) *</label>
+            <InputNumber id="task-price" v-model="form.price" :min="0" mode="decimal" :max-fraction-digits="2" class="w-full" aria-required="true" />
           </div>
 
           <!-- Customer lookup -->
@@ -66,12 +66,12 @@
 
           <!-- Discount -->
           <div class="col-6 field">
-            <label>Discount Type</label>
-            <Select v-model="form.discountType" :options="discountTypes" option-label="label" option-value="value" placeholder="None" class="w-full" show-clear />
+            <label for="discount-type">Discount Type</label>
+            <Select id="discount-type" v-model="form.discountType" :options="discountTypes" option-label="label" option-value="value" placeholder="None" class="w-full" show-clear />
           </div>
           <div class="col-6 field">
-            <label>Discount Value</label>
-            <InputNumber v-model="form.discountValue" :min="0" :disabled="!form.discountType" class="w-full" />
+            <label for="discount-val">Discount Value</label>
+            <InputNumber id="discount-val" v-model="form.discountValue" :min="0" :disabled="!form.discountType" class="w-full" />
           </div>
 
           <!-- Start / End Time -->
@@ -99,8 +99,8 @@
 
         <Message v-if="formError" severity="error" class="mb-2">{{ formError }}</Message>
         <div class="flex justify-content-end gap-2 mt-3">
-          <Button label="Cancel" severity="secondary" outlined type="button" @click="$router.push('/tasks')" />
-          <Button label="Create Task" icon="pi pi-check" type="submit" :loading="submitting" />
+          <Button label="Cancel" severity="secondary" outlined type="button" aria-label="Go back to tasks" @click="$router.push('/tasks')" />
+          <Button label="Create Task" icon="pi pi-check" type="submit" :loading="submitting" aria-label="Submit and create task" />
         </div>
       </form>
     </div>
@@ -136,7 +136,7 @@ const formError      = ref('');
 
 const discountTypes = [
   { label: 'Percentage (%)', value: 'percentage' },
-  { label: 'Fixed Amount (₹)', value: 'fixed' },
+  { label: 'Fixed Amount (LKR)', value: 'fixed' },
 ];
 
 const statusOptions = [

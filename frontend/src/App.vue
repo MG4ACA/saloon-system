@@ -7,7 +7,8 @@
         <span class="brand-name">Salon POS</span>
       </div>
 
-      <div class="nav-links">
+      <!-- Desktop nav links -->
+      <div class="nav-links desktop-nav">
         <router-link to="/dashboard" class="nav-link" active-class="active">
           <i class="pi pi-home" /> Dashboard
         </router-link>
@@ -39,9 +40,32 @@
       <div class="nav-user">
         <span class="user-name">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</span>
         <span class="user-role">{{ authStore.user?.role }}</span>
-        <Button label="Logout" icon="pi pi-sign-out" severity="danger" size="small" outlined @click="logout" />
+        <Button label="Logout" icon="pi pi-sign-out" severity="danger" size="small" outlined @click="logout" class="desktop-logout" />
+        <!-- Hamburger -->
+        <button class="hamburger" :aria-expanded="mobileOpen" aria-label="Toggle navigation" @click="mobileOpen = !mobileOpen">
+          <i :class="mobileOpen ? 'pi pi-times' : 'pi pi-bars'" />
+        </button>
       </div>
     </nav>
+
+    <!-- Mobile slide-down nav -->
+    <Transition name="mobile-nav">
+      <div v-if="isAuthenticated && mobileOpen" class="mobile-nav-drawer" @click.self="mobileOpen = false">
+        <div class="mobile-nav-links">
+          <router-link to="/dashboard"      class="mobile-link" @click="mobileOpen = false"><i class="pi pi-home" /> Dashboard</router-link>
+          <router-link to="/tasks"          class="mobile-link" @click="mobileOpen = false"><i class="pi pi-list" /> Tasks</router-link>
+          <router-link to="/commissions"    class="mobile-link" @click="mobileOpen = false"><i class="pi pi-wallet" /> Commissions</router-link>
+          <template v-if="isAdmin">
+            <router-link to="/employees"        class="mobile-link" @click="mobileOpen = false"><i class="pi pi-users" /> Employees</router-link>
+            <router-link to="/service-categories" class="mobile-link" @click="mobileOpen = false"><i class="pi pi-tags" /> Categories</router-link>
+            <router-link to="/services"         class="mobile-link" @click="mobileOpen = false"><i class="pi pi-star" /> Services</router-link>
+            <router-link to="/packages"         class="mobile-link" @click="mobileOpen = false"><i class="pi pi-box" /> Packages</router-link>
+            <router-link to="/reports"          class="mobile-link" @click="mobileOpen = false"><i class="pi pi-chart-bar" /> Reports</router-link>
+          </template>
+          <button class="mobile-link logout-mobile" @click="logout"><i class="pi pi-sign-out" /> Logout</button>
+        </div>
+      </div>
+    </Transition>
 
     <!-- Main page content -->
     <main :class="{ 'with-nav': isAuthenticated }">
@@ -58,18 +82,24 @@
 import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from './stores/auth';
 
-const router = useRouter();
+const router    = useRouter();
+const route     = useRoute();
 const authStore = useAuthStore();
 
 const isAuthenticated = computed(() => authStore.isAuthenticated);
-const isAdmin = computed(() => authStore.user?.role === 'admin');
+const isAdmin         = computed(() => authStore.user?.role === 'admin');
+const mobileOpen      = ref(false);
+
+// Close mobile nav on route change
+watch(() => route.path, () => { mobileOpen.value = false; });
 
 const logout = () => {
   authStore.logout();
+  mobileOpen.value = false;
   router.push('/login');
 };
 </script>
@@ -151,10 +181,64 @@ body {
   text-transform: capitalize;
 }
 
+/* ── Mobile nav ─────────────────────────────────────────────── */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.hamburger:hover { background: rgba(255,255,255,0.12); }
+
+.mobile-nav-drawer {
+  position: fixed;
+  top: 60px;
+  left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 99;
+}
+.mobile-nav-links {
+  background: #1e1e2e;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.5rem;
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.15s;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+.mobile-link:hover, .mobile-link.active { background: rgba(255,255,255,0.08); color: white; }
+.logout-mobile { color: #f87171; }
+
+.mobile-nav-enter-active, .mobile-nav-leave-active { transition: opacity 0.2s; }
+.mobile-nav-enter-from, .mobile-nav-leave-to { opacity: 0; }
+
+@media (max-width: 767px) {
+  .desktop-nav, .user-name, .user-role, .desktop-logout { display: none !important; }
+  .hamburger { display: flex; align-items: center; }
+  .nav-user { margin-left: auto; }
+}
+
 main {
   flex: 1;
   padding: 2rem;
 }
 main.with-nav { min-height: calc(100vh - 60px); }
-</style>
-
