@@ -50,11 +50,11 @@
 
       <div class="col-12 md:col-6 lg:col-3">
         <div class="stat-card">
-          <div class="stat-icon" style="background:#f4e8ff">✅</div>
+          <div class="stat-icon" style="background:#f4e8ff">💰</div>
           <div>
-            <div class="stat-label">SERVICES THIS MONTH</div>
-            <div class="stat-value">0</div>
-            <div class="stat-note">Completed services</div>
+            <div class="stat-label">THIS MONTH'S COMMISSION</div>
+            <div class="stat-value">LKR {{ Number(commission.totalEarned ?? 0).toFixed(0) }}</div>
+            <div class="stat-note">{{ commission.taskCount ?? 0 }} tasks completed</div>
           </div>
         </div>
       </div>
@@ -82,12 +82,14 @@ import Button from 'primevue/button';
 import Card from 'primevue/card';
 import { onMounted, reactive } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import commissionService from '../services/commissionService';
 import taskService from '../services/taskService';
 import userService from '../services/userService';
 
-const authStore = useAuthStore();
-const stats   = reactive({ activeEmployees: null });
-const summary = reactive({ todayCount: null, todayRevenue: 0, completedCount: 0 });
+const authStore  = useAuthStore();
+const stats      = reactive({ activeEmployees: null });
+const summary    = reactive({ todayCount: null, todayRevenue: 0, completedCount: 0 });
+const commission = reactive({ totalEarned: 0, taskCount: 0 });
 
 const today = new Date().toLocaleDateString('en-IN', {
   weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
@@ -100,6 +102,13 @@ onMounted(async () => {
   calls.push(
     taskService.getTaskSummary()
       .then((res) => { Object.assign(summary, res.data.summary); })
+      .catch(() => {})
+  );
+
+  // Fetch this month's commission for everyone
+  calls.push(
+    commissionService.getSummary(new Date().getFullYear(), new Date().getMonth() + 1)
+      .then((res) => { Object.assign(commission, res.data.summary); })
       .catch(() => {})
   );
 

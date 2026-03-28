@@ -57,6 +57,12 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
+    path: '/commissions',
+    name: 'Commissions',
+    component: () => import('../pages/Commissions.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/',
     redirect: '/dashboard',
   },

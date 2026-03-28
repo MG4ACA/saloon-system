@@ -1,0 +1,182 @@
+<template>
+  <div class="commissions-page">
+    <div class="flex align-items-center justify-content-between mb-4">
+      <h1 class="text-2xl font-bold text-900 m-0">💰 Commissions</h1>
+      <!-- Employee selector — admin only -->
+      <Select
+        v-if="isAdmin"
+        v-model="selectedEmployeeId"
+        :options="employees"
+        option-label="label"
+        option-value="value"
+        placeholder="Select employee"
+        class="w-14rem"
+        filter
+        @change="load"
+      />
+    </div>
+
+    <!-- Month / Year Filter -->
+    <div class="filters-bar flex gap-2 align-items-center mb-4">
+      <label class="text-sm font-semibold text-600">Month:</label>
+      <Select v-model="selectedMonth" :options="months" option-label="label" option-value="value" class="w-8rem" @change="load" />
+      <Select v-model="selectedYear"  :options="years"  option-label="label" option-value="value" class="w-7rem" @change="load" />
+    </div>
+
+    <!-- Summary cards -->
+    <div class="grid mb-4">
+      <div class="col-12 md:col-4">
+        <div class="summary-card primary">
+          <div class="summary-icon">🏆</div>
+          <div>
+            <div class="summary-label">Total Earned</div>
+            <div class="summary-value">LKR {{ Number(summary.totalEarned ?? 0).toFixed(2) }}</div>
+            <div class="summary-note">{{ summary.taskCount ?? 0 }} completed tasks</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 md:col-4">
+        <div class="summary-card green">
+          <div class="summary-icon">📋</div>
+          <div>
+            <div class="summary-label">Tasks Completed</div>
+            <div class="summary-value">{{ summary.taskCount ?? 0 }}</div>
+            <div class="summary-note">{{ monthLabel }} {{ selectedYear }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 md:col-4">
+        <div class="summary-card blue">
+          <div class="summary-icon">📊</div>
+          <div>
+            <div class="summary-label">Avg Per Task</div>
+            <div class="summary-value">LKR {{ avgPerTask }}</div>
+            <div class="summary-note">Commission average</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Per-service breakdown -->
+    <div class="card">
+      <h2 class="text-lg font-bold mb-3">Breakdown by Service</h2>
+      <DataTable :value="breakdown" :loading="loading" dataKey="serviceName" class="p-datatable-sm" stripedRows>
+        <template #empty>No commission data for this period.</template>
+        <Column field="serviceName" header="Service" />
+        <Column header="Commission Rate">
+          <template #body="{ data }">
+            <span v-if="data.commissionType === 'percentage'">{{ data.commissionValue }}%</span>
+            <span v-else-if="data.commissionType === 'fixed'">LKR {{ data.commissionValue }} flat</span>
+            <span v-else class="text-400">No rule</span>
+          </template>
+        </Column>
+        <Column field="taskCount" header="Tasks" style="width:8rem" />
+        <Column header="Earned" style="width:12rem">
+          <template #body="{ data }">
+            <span class="font-bold text-green-600">LKR {{ Number(data.totalEarned).toFixed(2) }}</span>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import Column from 'primevue/column';
+import DataTable from 'primevue/datatable';
+import Select from 'primevue/select';
+import { useToast } from 'primevue/usetoast';
+import { computed, onMounted, reactive, ref } from 'vue';
+import { useAuthStore } from '../stores/auth';
+import api from '../services/api';
+import commissionService from '../services/commissionService';
+
+const toast   = useToast();
+const auth    = useAuthStore();
+const isAdmin = computed(() => auth.user?.role === 'admin');
+
+const now = new Date();
+const selectedMonth      = ref(now.getMonth() + 1);
+const selectedYear       = ref(now.getFullYear());
+const selectedEmployeeId = ref(null);
+const loading            = ref(false);
+const breakdown          = ref([]);
+const summary            = reactive({ totalEarned: 0, taskCount: 0 });
+const employees          = ref([]);
+
+const months = [
+  { label: 'January', value: 1 },  { label: 'February', value: 2 },
+  { label: 'March', value: 3 },    { label: 'April', value: 4 },
+  { label: 'May', value: 5 },      { label: 'June', value: 6 },
+  { label: 'July', value: 7 },     { label: 'August', value: 8 },
+  { label: 'September', value: 9 }, { label: 'October', value: 10 },
+  { label: 'November', value: 11 }, { label: 'December', value: 12 },
+];
+
+const years = Array.from({ length: 3 }, (_, i) => {
+  const y = now.getFullYear() - i;
+  return { label: String(y), value: y };
+});
+
+const monthLabel = computed(() => months.find((m) => m.value === selectedMonth.value)?.label || '');
+const avgPerTask = computed(() => {
+  if (!summary.taskCount) return '0.00';
+  return (summary.totalEarned / summary.taskCount).toFixed(2);
+});
+
+const load = async () => {
+  loading.value = true;
+  try {
+    const params = {
+      year: selectedYear.value,
+      month: selectedMonth.value,
+    };
+    if (isAdmin.value && selectedEmployeeId.value) {
+      params.employeeId = selectedEmployeeId.value;
+    }
+    const res = await commissionService.getCommissions(params);
+    breakdown.value = res.data.breakdown;
+    Object.assign(summary, res.data.summary);
+  } catch {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load commissions', life: 4000 });
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(async () => {
+  if (isAdmin.value) {
+    try {
+      const res = await api.get('/users');
+      employees.value = res.data.users
+        .filter((u) => u.role === 'employee')
+        .map((u) => ({ label: `${u.firstName} ${u.lastName}`, value: u.id }));
+    } catch { /* ignore */ }
+  }
+  await load();
+});
+</script>
+
+<style scoped>
+.commissions-page { max-width: 1100px; margin: 0 auto; }
+.filters-bar { background: var(--p-surface-card); border-radius: 10px; padding: 0.75rem 1rem; }
+.card { background: var(--p-surface-card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+
+.summary-card {
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  height: 100%;
+}
+.summary-card.primary { background: linear-gradient(135deg, #667eea22, #764ba222); border: 1px solid #667eea44; }
+.summary-card.green   { background: linear-gradient(135deg, #11998e22, #38ef7d22); border: 1px solid #38ef7d44; }
+.summary-card.blue    { background: linear-gradient(135deg, #2193b022, #6dd5ed22); border: 1px solid #6dd5ed44; }
+
+.summary-icon { font-size: 1.6rem; min-width: 44px; text-align: center; }
+.summary-label { font-size: 0.72rem; font-weight: 700; color: #888; letter-spacing: .06em; margin-bottom: .25rem; }
+.summary-value { font-size: 1.6rem; font-weight: 700; color: #1e1e2e; line-height: 1; margin-bottom: .25rem; }
+.summary-note  { font-size: 0.76rem; color: #aaa; }
+</style>

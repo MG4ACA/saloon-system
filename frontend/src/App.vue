@@ -14,6 +14,9 @@
         <router-link to="/tasks" class="nav-link" active-class="active">
           <i class="pi pi-list" /> Tasks
         </router-link>
+        <router-link to="/commissions" class="nav-link" active-class="active">
+          <i class="pi pi-wallet" /> Commissions
+        </router-link>
         <template v-if="isAdmin">
           <router-link to="/employees" class="nav-link" active-class="active">
             <i class="pi pi-users" /> Employees

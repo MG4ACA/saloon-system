@@ -1,3 +1,4 @@
+import Commission from '../models/Commission.js';
 import Task from '../models/Task.js';
 
 export const getTasks = async (req, res) => {
@@ -97,6 +98,18 @@ export const updateTaskStatus = async (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
     const updated = await Task.updateStatus(req.params.id, status);
+
+    // Auto-calculate commission when task is completed
+    if (status === 'completed') {
+      try {
+        const calc = await Commission.calculate(updated);
+        await Commission.upsert(updated, calc);
+      } catch (commErr) {
+        // Log but never block the status update
+        console.error('Commission calculation error (non-fatal):', commErr.message);
+      }
+    }
+
     res.json({ message: 'Status updated', task: updated });
   } catch (e) {
     if (e.message === 'LOCKED') return res.status(403).json({ error: 'Task is locked. Records cannot be modified after 24 hours.' });

@@ -382,3 +382,25 @@ CREATE TABLE IF NOT EXISTS package_services (
   INDEX idx_package (package_id),
   INDEX idx_service (service_id)
 );
+
+-- Commissions (Week 4) — one row per completed task
+CREATE TABLE IF NOT EXISTS commissions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  task_id INT NOT NULL,
+  employee_id INT NOT NULL,
+  service_id INT NOT NULL,
+  task_price DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  discount_amount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  effective_price DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  commission_type ENUM('percentage', 'fixed') DEFAULT NULL,
+  commission_value DECIMAL(10, 2) DEFAULT 0,
+  commission_amount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  apply_after_discount TINYINT DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY unique_task (task_id),
+  FOREIGN KEY (task_id) REFERENCES tasks(id),
+  FOREIGN KEY (employee_id) REFERENCES users(id),
+  FOREIGN KEY (service_id) REFERENCES services(id),
+  INDEX idx_employee_month (employee_id, created_at)
+);
