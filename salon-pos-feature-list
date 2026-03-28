@@ -1,0 +1,171 @@
+SALOON POS – FEATURE LIST 
+
+1️⃣ User & Role Management 
+Roles (phase 1)
+• Admin (Full Access) 
+• Employee (Limited Access) 
+
+Admin Features 
+• Create / Edit / Disable employees 
+• Assign roles 
+• View all system data 
+• View financial reports 
+• Manage services & pricing 
+• Manage inventory 
+• Configure commission rules 
+• System settings access 
+
+Employee Features 
+• Login securely 
+• Add their own tasks 
+• View their task history 
+• Mark tasks as completed 
+• View their own performance summary 
+• View commission summary (optional) 
+ 
+ 
+ 2️⃣ Service Management (phase 1)
+• Create service categories (Hair, Makeup, Facial, etc.) 
+• Add / Edit / Disable services 
+• Set: 
+  o Service price 
+  o Duration 
+  o Commission rule (% or fixed) 
+• Attach required products to service (optional) 
+• Create service packages / combos 
+ 
+ 3️⃣ Employee Task Management (Self-
+Entry) (phase 1)
+Employee Side 
+• Add new task: 
+  o Select service 
+  o Select or add customer 
+  o Add notes 
+  o Add products used 
+  o Set start time / end time 
+• Mark status: 
+  o In Progress 
+  o Completed 
+  o Cancelled 
+• View: 
+  o Today’s tasks 
+  o Task history 
+  o Total services completed 
+  o Revenue generated 
+   
+ 
+Admin Side 
+• View all employee tasks 
+• Filter by: 
+  o Date 
+  o Employee 
+  o Service 
+• Edit tasks (optional) 
+• Lock past records 
+• Task productivity report 
+
+⚠ Important decision: 
+• Can employee edit price? yes
+• Can employee delete completed task? no 
+(Strongly recommend: NO, or require admin approval) 
+ 
+ 
+4️⃣ POS & Billing System (phase 2)
+Invoice Creation 
+• Add services 
+• Add retail products 
+• Apply discount (flat / %) 
+• GST / tax handling 
+Billing Features 
+• Auto invoice number 
+• Print / Download invoice 
+• Refund / Return management 
+• Void invoice (with reason) 
+• Daily closing summary 
+• Payment method report 
+   
+ 
+ 5️⃣ Batch-Wise Inventory Management (phase 2)
+Product Setup 
+• Add product 
+• Product category 
+• Unit type (ml, gm, pcs) 
+Batch Entry 
+• Batch number 
+• Purchase date 
+• Expiry date 
+• Cost price 
+• Selling price 
+• Quantity 
+• Supplier 
+Inventory Operations 
+• Purchase entry 
+• FIFO auto deduction 
+• Wastage entry 
+• Stock adjustment 
+• Low stock alert 
+• Expiry alert 
+• Batch-wise stock report 
+• Stock movement history 
+When: 
+• Service completed → deduct product 
+• Retail sale → deduct product 
+ 
+ 
+ 6️⃣ Customer Management (optional)  (phase 3)
+• Add / Edit customer 
+• Phone number validation 
+• Visit history 
+• Services taken 
+• Total spending 
+• Notes 
+• Preferred employee 
+• Basic customer report 
+(Optional future) 
+• Loyalty points 
+• Membership plans 
+ 
+ 7️⃣ Commission Management  (phase 1)
+• Commission per service 
+• % or fixed 
+• After discount toggle 
+• Monthly commission report 
+• Employee earnings summary 
+Automatic calculation after: 
+• Invoice is completed 
+ 
+ 
+ 8️⃣ Reports  (phase 1)
+Sales Reports 
+• Daily sales 
+• Monthly sales 
+• Payment method report 
+• Tax report 
+Employee Reports 
+• Services completed 
+• Revenue generated 
+• Commission earned 
+Inventory Reports (phase 2)
+• Stock report 
+• Batch report 
+• Expiry report 
+• Purchase report 
+• Stock usage report 
+Service Reports 
+• Most popular service 
+• Revenue by service 
+ 
+ 
+9️⃣ Expense Management (phase 2)
+• Add expense 
+• Expense category 
+• Attach bill 
+• Daily / Monthly expense report 
+• Profit calculation (Revenue – Expense) 
+ 
+ 🔟 Security & Controls (phase 1)
+• Role-based access 
+• Audit logs (who edited what) 
+• Lock past data (e.g., cannot edit after 24 hours) 
+• Backup system 
+• Soft delete instead of hard delete
