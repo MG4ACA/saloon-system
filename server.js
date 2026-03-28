@@ -9,11 +9,16 @@ dotenv.config();
 
 const app = express();
 
+// Trust Nginx reverse proxy
+app.set('trust proxy', 1);
+
 // Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true,
+  }),
+);
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -33,6 +38,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // API Routes
+import auditLog from './server/middleware/auditMiddleware.js';
 import authRoutes from './server/routes/auth.js';
 import categoryRoutes from './server/routes/categories.js';
 import commissionRoutes from './server/routes/commissions.js';
@@ -42,8 +48,6 @@ import reportRoutes from './server/routes/reports.js';
 import serviceRoutes from './server/routes/services.js';
 import taskRoutes from './server/routes/tasks.js';
 import userRoutes from './server/routes/users.js';
-import auditLog from './server/middleware/auditMiddleware.js';
-import { authenticateToken } from './server/middleware/authMiddleware.js';
 
 // Global audit middleware — logs all mutating requests for authenticated users
 app.use('/api', (req, res, next) => {
@@ -80,4 +84,3 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
-

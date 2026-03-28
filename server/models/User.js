@@ -1,51 +1,59 @@
 // Using MySQL with Sequelize or raw queries
 import db from '../config/database.js';
 
-// Create users table if it doesn't exist
-const createUsersTable = `
-  CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    firstName VARCHAR(100) NOT NULL,
-    lastName VARCHAR(100) NOT NULL,
-    role ENUM('admin', 'employee') DEFAULT 'employee',
-    isActive BOOLEAN DEFAULT TRUE,
-    lastLogin TIMESTAMP NULL,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  )
-`;
+console.log('✅ Users table ensured');
 
-db.query(createUsersTable)
-  .then(() => console.log('✅ Users table ensured'))
-  .catch((err) => console.error('❌ Error creating users table:', err));
+/** Normalize a raw DB row to the shape expected by controllers */
+const normalize = (row) => {
+  if (!row) return null;
+  const nameParts = (row.name || '').split(' ');
+  return {
+    id: row.id,
+    email: row.email,
+    password: row.password_hash, // map password_hash → password
+    firstName: nameParts[0] || '',
+    lastName: nameParts.slice(1).join(' ') || '',
+    role: row.role,
+    status: row.status,
+    isActive: row.status === 'active',
+    lastLogin: row.updated_at,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+};
 
 export const User = {
   // Find user by email
   findByEmail: async (email) => {
-    const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
-    return rows.length > 0 ? rows[0] : null;
+    const [rows] = await db.query(
+      'SELECT * FROM users WHERE email = ? AND is_deleted = 0 LIMIT 1',
+      [email],
+    );
+    return normalize(rows[0] || null);
   },
 
   // Find user by ID
   findById: async (id) => {
-    const [rows] = await db.query('SELECT * FROM users WHERE id = ?', [id]);
-    return rows.length > 0 ? rows[0] : null;
+    const [rows] = await db.query('SELECT * FROM users WHERE id = ? AND is_deleted = 0 LIMIT 1', [
+      id,
+    ]);
+    return normalize(rows[0] || null);
   },
 
   // Create a new user
   create: async (userData) => {
     const { email, password, firstName, lastName, role = 'employee' } = userData;
+    const name = `${firstName} ${lastName}`.trim();
     const [result] = await db.query(
-      'INSERT INTO users (email, password, firstName, lastName, role) VALUES (?, ?, ?, ?, ?)',
-      [email, password, firstName, lastName, role],
+      `INSERT INTO users (name, email, password_hash, role, status, is_deleted)
+       VALUES (?, ?, ?, ?, 'active', 0)`,
+      [name, email, password, role],
     );
     return result.insertId;
   },
 
   // Update last login
   updateLastLogin: async (id) => {
-    await db.query('UPDATE users SET lastLogin = NOW() WHERE id = ?', [id]);
+    await db.query('UPDATE users SET updated_at = NOW() WHERE id = ?', [id]);
   },
 };
