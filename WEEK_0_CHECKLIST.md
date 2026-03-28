@@ -158,38 +158,49 @@ salon-system/
 
 ---
 
-## 🔧 Next Steps (Week 1 - Phase 1 Start)
+## ✅ Completed Steps (Week 1)
 
-### Week 1: Authentication System
+### Week 1: Authentication System — ✅ COMPLETE
 
 - [x] Implement authentication routes:
-  - [x] POST `/api/auth/register` (admin only)
-  - [x] POST `/api/auth/login`
+  - [x] POST `/api/auth/register` (admin only + Joi validation)
+  - [x] POST `/api/auth/login` (Joi validation)
   - [x] POST `/api/auth/refresh`
-  - [x] POST `/api/auth/logout`
-- [x] Create authentication middleware
-- [x] Implement JWT token generation and validation
-- [x] Add password hashing with bcryptjs
-- [x] Create user model with MySQL
-- [x] Create user controller
-- [ ] Test login flow end-to-end
+  - [x] POST `/api/auth/logout` (JWT protected)
+- [x] Create authentication middleware (`authenticateToken`, `requireAdmin`)
+- [x] Implement JWT token generation and validation (access 15m + refresh 7d)
+- [x] Add password hashing with bcryptjs (saltRounds=10)
+- [x] Create user model with MySQL (`User.js`)
+- [x] Create auth controller
+- [x] Add rate limiting (10 req / 15 min on auth routes)
+- [x] Harden CORS (FRONTEND_URL from .env)
+- [x] Input validation middleware with Joi (`validateMiddleware.js`)
+- [x] Test login flow end-to-end ✅
 
-### Week 1-2: User & Role Management
+### Week 1-2: User & Role Management — ✅ COMPLETE
 
-- [ ] Create user CRUD endpoints
-- [ ] Implement role assignment
-- [ ] Create employee management interface
-- [ ] Add user enable/disable functionality
-- [ ] Frontend: Build employee list page
-- [ ] Frontend: Build employee add/edit modal
+- [x] Create user CRUD endpoints (`GET /api/users`, `GET /api/users/:id`, `PUT /api/users/:id`, `PATCH /api/users/:id/status`)
+- [x] Create employee model (`Employee.js`)
+- [x] Create user controller (`userController.js`)
+- [x] Create users router (`users.js`) — all routes admin-only
+- [x] Create employee management interface (`Employees.vue` — full table + modals)
+- [x] Add user enable/disable functionality (with confirmation modal)
+- [x] Frontend: Build employee list page ✅
+- [x] Frontend: Build employee add modal ✅
+- [x] Dashboard improvements: welcome banner, real stats, quick actions, role-aware UI
+- [x] Auth store: user restored from localStorage on page reload
+
+---
+
+## 🔧 Next Steps (Week 2)
 
 ### Week 2: Service Management
 
-- [ ] Create service category endpoints
-- [ ] Create service CRUD endpoints
-- [ ] Implement commission rule configuration
-- [ ] Frontend: Build service category management
-- [ ] Frontend: Build service CRUD page
+- [ ] Create service category CRUD (`/api/categories`)
+- [ ] Create service CRUD (`/api/services`)
+- [ ] Implement commission rule configuration per service
+- [ ] Frontend: Service category management page
+- [ ] Frontend: Service CRUD page with pricing, duration, commission
 
 ---
 
@@ -394,6 +405,6 @@ All pre-development setup is complete. The application is ready for Phase 1 impl
 
 ---
 
-**Status**: ✅ COMPLETE
-**Date**: 2025-03-28
-**Next Phase**: Week 1 - Authentication System
+**Status**: ✅ Week 0 + Week 1 COMPLETE
+**Last Updated**: 2026-03-28
+**Next Phase**: Week 2 - Service Management

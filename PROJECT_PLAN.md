@@ -27,15 +27,15 @@ Develop a comprehensive Salon Point-of-Sale (POS) system built for daily salon o
 
 **Goal:** Get the salon running with essential daily operations
 
-#### 1.1 Project Setup (3-4 days)
+#### 1.1 Project Setup ✅
 
-- [ ] Initialize Git repository with `.gitignore`
-- [ ] Frontend: Vue 3 + Vite + Pinia + PrimeVue setup
-- [ ] Backend: Express.js + JWT auth middleware + CORS
-- [ ] Database: MySQL schema design & migrations
-- [ ] API structure: RESTful endpoints planning
-- [ ] Environment config (.env setup)
-- [ ] Development server setup & testing tools
+- [x] Initialize Git repository with `.gitignore`
+- [x] Frontend: Vue 3 + Vite + Pinia setup
+- [x] Backend: Express.js + JWT auth middleware + CORS
+- [x] Database: MySQL schema design & migrations (18 tables)
+- [x] API structure: RESTful endpoints planning
+- [x] Environment config (.env setup)
+- [x] Development server setup & testing tools
 
 #### 1.2 Database Design & Schema (3-4 days)
 
@@ -52,71 +52,80 @@ Develop a comprehensive Salon Point-of-Sale (POS) system built for daily salon o
 - `audit_logs` (id, user_id, table_name, action, old_data, new_data, timestamp)
 - `system_settings` (key, value, updated_by, updated_at)
 
-#### 1.3 Authentication & Authorization (5-6 days)
+#### 1.3 Authentication & Authorization ✅
 
 **Backend:**
 
-- [ ] User registration (Admin only)
-- [ ] Login with JWT token generation
-- [ ] Refresh token mechanism
-- [ ] Password hashing (bcrypt)
-- [ ] Role-based middleware
-- [ ] Logout functionality
+- [x] User registration (Admin only, Joi validation)
+- [x] Login with JWT token generation (access 15m + refresh 7d)
+- [x] Refresh token mechanism
+- [x] Password hashing (bcryptjs)
+- [x] Role-based middleware (`authenticateToken`, `requireAdmin`)
+- [x] Logout functionality
+- [x] Rate limiting (10 req / 15 min)
+- [x] Input validation with Joi
 
 **Frontend:**
 
-- [ ] Login page (responsive design)
-- [ ] Token storage (localStorage with httpOnly cookies fallback)
-- [ ] Protected routes & redirects
-- [ ] Session timeout handling
-- [ ] "Remember me" (optional)
+- [x] Login page (responsive design, server error messages)
+- [x] Token storage (localStorage, auth header auto-set on reload)
+- [x] Protected routes & redirects
+- [ ] Session timeout handling (deferred to Phase 1.9)
+- [ ] "Remember me" (optional — deferred)
 
-#### 1.4 User & Role Management (4-5 days)
+#### 1.4 User & Role Management ✅
 
 **Admin Features:**
 
-- [ ] Dashboard overview
-- [ ] Employee list (Create/Edit/Disable)
-- [ ] Role assignment (Admin/Employee)
-- [ ] View all system data access
-- [ ] Settings panel for other configurations
+- [x] Dashboard overview with real stats + quick actions
+- [x] Employee list (Create/Disable/Enable)
+- [x] Role assignment (Admin/Employee)
+- [x] View all system data access
+- [ ] Settings panel (deferred to later)
 
 **Backend:**
 
-- [ ] CRUD endpoints: `/api/users` `/api/users/:id`
-- [ ] Role assignment endpoint
-- [ ] User status management
-- [ ] Validation rules
+- [x] CRUD endpoints: `GET /api/users`, `GET /api/users/:id`, `PUT /api/users/:id`, `PATCH /api/users/:id/status`
+- [x] Role-based access on all user endpoints
+- [x] User status management (enable/disable)
+- [x] Validation rules (Joi schemas)
 
 **Frontend:**
 
-- [ ] Employee management table
-- [ ] Create/Edit employee modal
-- [ ] Disable employee with confirmation
-- [ ] Admin dashboard layout
+- [x] Employee management table (name, email, role, status, last login)
+- [x] Create employee modal (name, email, password, role)
+- [x] Disable/Enable employee with confirmation dialog
+- [x] Admin dashboard layout with real stats
 
-#### 1.5 Service Management (4-5 days)
+#### 1.5 Service Management — 🔵 Week 2 (IN PROGRESS)
+
+**Architecture Decisions:**
+- Commission rules stored in separate `commission_rules` table (one rule per service, linked by `service_id`)
+- Service packages/combos included in Week 2 (not deferred)
+- UI uses **PrimeVue v4** + **PrimeFlex v4** (upgraded from current v3 scaffold)
 
 **Features:**
 
-- [ ] Create service categories (Hair, Makeup, Facial, etc.)
-- [ ] Add/Edit/Disable services
-- [ ] Set: price, duration, commission rule
-- [ ] Attach optional products to service
-- [ ] Create service packages/combos
+- [ ] Create/edit/disable service categories (Hair, Makeup, Facial, etc.)
+- [ ] Add/Edit/Disable services with: name, category, duration, base price
+- [ ] Commission rule per service: type (% or fixed), value, apply-after-discount flag
+- [ ] Service packages/combos (bundle multiple services at a package price)
+- [ ] Attach optional products to a service (for auto-deduction later)
 
 **Backend:**
 
-- [ ] CRUD: `/api/services`, `/api/categories`
-- [ ] Service packages endpoint
-- [ ] Validation & duplicate checks
+- [ ] CRUD: `GET/POST/PUT/PATCH /api/categories`
+- [ ] CRUD: `GET/POST/PUT/PATCH /api/services` (with commission rule upsert)
+- [ ] `GET/POST/PUT/PATCH /api/packages` (service packages/combos)
+- [ ] Validation & duplicate name checks (Joi)
 
-**Frontend:**
+**Frontend (PrimeVue v4 + PrimeFlex):**
 
-- [ ] Service category list & management
-- [ ] Service CRUD interface
-- [ ] Service package builder
-- [ ] Pricing & duration configuration
+- [ ] Upgrade PrimeVue v3 → v4 + PrimeFlex v3 → v4 (`@primevue/themes` preset system)
+- [ ] Service category management page (DataTable, Dialog, InputText, Badge)
+- [ ] Service CRUD page (DataTable with inline commission config)
+- [ ] Service package builder (multi-select services, package pricing)
+- [ ] Pricing & duration configuration UI
 
 #### 1.6 Employee Task Management (6-7 days)
 
@@ -524,7 +533,7 @@ server/
 
 - **Framework:** Vue 3 + Vite
 - **State:** Pinia
-- **UI:** PrimeVue + Prime Flex
+- **UI:** PrimeVue v4 + PrimeFlex v4 (`@primevue/themes` Aura preset — upgraded from v3 in Week 2)
 - **HTTP:** Axios
 - **Charts:** Chart.js (or PrimeVue charts)
 - **PDF Export:** jsPDF or similar
@@ -590,17 +599,18 @@ By end of Phase 3:
 
 ## 📋 Next Steps
 
-1. **Week 0 (Preparation):**
-   - [ ] Set up Git repository
-   - [ ] Finalize database schema
-   - [ ] Create API endpoint documentation
-   - [ ] Set up frontend project structure
-   - [ ] Configure VPS/MySQL hosting
+1. **Week 0 (Preparation):** ✅ DONE
+   - [x] Set up Git repository
+   - [x] Finalize database schema (18 tables)
+   - [x] Create API endpoint documentation
+   - [x] Set up frontend project structure
+   - [ ] Configure VPS/MySQL hosting (planned for Phase 1 end)
 
-2. **Week 1 (Foundation):**
-   - [ ] Complete authentication system
-   - [ ] Set up core API structure
-   - [ ] Basic dashboard layout
+2. **Week 1 (Foundation):** ✅ DONE
+   - [x] Complete authentication system
+   - [x] User & employee management (CRUD + frontend)
+   - [x] Core API structure with validation and rate limiting
+   - [x] Dashboard with real stats + Employee management page
 
 3. **Week 2-5 (Phase 1 Development):**
    - [ ] Implement all Phase 1 features
@@ -615,6 +625,6 @@ By end of Phase 3:
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** 2025-03-28
-**Status:** Ready for Development
+**Document Version:** 1.1
+**Last Updated:** 2026-03-28
+**Status:** 🟢 In Development — Phase 1 (Week 2: Service Management next)

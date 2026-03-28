@@ -341,16 +341,43 @@ CREATE TABLE IF NOT EXISTS system_settings (
 );
 
 -- Insert default location
-INSERT INTO locations (name, address, phone, email) VALUES
+INSERT IGNORE INTO locations (name, address, phone, email) VALUES
 ('Main Salon', '123 Main St', '+1234567890', 'info@salon.com');
 
 -- Insert default roles
-INSERT INTO roles (role_name, permissions) VALUES
+INSERT IGNORE INTO roles (role_name, permissions) VALUES
 ('admin', '{"all": true}'),
 ('employee', '{"tasks": true, "commission": true, "reports_personal": true}');
 
--- Create indexes for common queries
-CREATE INDEX idx_tasks_date_range ON tasks(location_id, created_at);
-CREATE INDEX idx_invoices_date_range ON invoices(location_id, created_at);
-CREATE INDEX idx_expenses_date_range ON expenses(location_id, expense_date);
-CREATE INDEX idx_audit_logs_user_date ON audit_logs(user_id, created_at);
+-- (Indexes are defined inline in each CREATE TABLE above)
+
+
+-- Service packages / combos (Week 2)
+CREATE TABLE IF NOT EXISTS service_packages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  package_price DECIMAL(10, 2) NOT NULL,
+  is_active TINYINT DEFAULT 1,
+  is_deleted TINYINT DEFAULT 0,
+  location_id INT,
+  created_by INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (location_id) REFERENCES locations(id),
+  FOREIGN KEY (created_by) REFERENCES users(id),
+  INDEX idx_location (location_id)
+);
+
+-- Junction: services included in each package
+CREATE TABLE IF NOT EXISTS package_services (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  package_id INT NOT NULL,
+  service_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (package_id) REFERENCES service_packages(id) ON DELETE CASCADE,
+  FOREIGN KEY (service_id) REFERENCES services(id),
+  UNIQUE KEY unique_package_service (package_id, service_id),
+  INDEX idx_package (package_id),
+  INDEX idx_service (service_id)
+);

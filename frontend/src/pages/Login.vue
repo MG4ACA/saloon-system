@@ -1,26 +1,59 @@
 <template>
-  <div class="login-container">
+  <div class="login-page">
     <div class="login-card">
-      <h1>Salon POS Login</h1>
-      <form @submit.prevent="handleLogin">
-        <div class="form-group">
-          <label>Email</label>
-          <input v-model="email" type="email" placeholder="Enter your email" required />
+      <div class="login-header">
+        <span class="login-logo">✂️</span>
+        <h1>Salon POS</h1>
+        <p>Sign in to your account</p>
+      </div>
+
+      <form @submit.prevent="handleLogin" class="login-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <InputText
+            id="email"
+            v-model="email"
+            type="email"
+            placeholder="admin@salon.com"
+            class="w-full"
+            :invalid="!!error"
+            required
+          />
         </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input v-model="password" type="password" placeholder="Enter your password" required />
+
+        <div class="field">
+          <label for="password">Password</label>
+          <Password
+            id="password"
+            v-model="password"
+            placeholder="Password"
+            class="w-full"
+            :feedback="false"
+            toggleMask
+            :invalid="!!error"
+            required
+          />
         </div>
-        <button type="submit" :disabled="loading">
-          {{ loading ? 'Logging in...' : 'Login' }}
-        </button>
-        <p v-if="error" class="error">{{ error }}</p>
+
+        <Message v-if="error" severity="error" class="mb-3">{{ error }}</Message>
+
+        <Button
+          type="submit"
+          label="Sign In"
+          icon="pi pi-sign-in"
+          class="w-full"
+          :loading="loading"
+        />
       </form>
     </div>
   </div>
 </template>
 
 <script setup>
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import Message from 'primevue/message';
+import Password from 'primevue/password';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
@@ -47,79 +80,48 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.login-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 50%, #1a1a2e 100%);
 }
 
 .login-card {
   background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  width: 300px;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  width: 380px;
+  max-width: 95vw;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
 }
 
-.login-card h1 {
+.login-header {
   text-align: center;
   margin-bottom: 2rem;
-  color: #333;
 }
 
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
+.login-logo {
+  font-size: 2.5rem;
   display: block;
   margin-bottom: 0.5rem;
-  color: #555;
-  font-weight: 500;
 }
 
-.form-group input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  box-sizing: border-box;
+.login-header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1e1e2e;
+  margin: 0 0 0.25rem 0;
 }
 
-.form-group input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+.login-header p {
+  color: #888;
+  font-size: 0.9rem;
 }
 
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
-}
+.login-form { display: flex; flex-direction: column; gap: 1rem; }
 
-button:hover:not(:disabled) {
-  background: #5568d3;
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.error {
-  color: #dc3545;
-  text-align: center;
-  margin-top: 1rem;
-}
+.field { display: flex; flex-direction: column; gap: 0.4rem; }
+.field label { font-size: 0.85rem; font-weight: 600; color: #555; }
 </style>

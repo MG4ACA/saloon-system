@@ -1,81 +1,86 @@
 <template>
-  <div class="dashboard">
-    <div class="page-header">
+  <div class="dashboard-page">
+    <!-- Welcome Header -->
+    <div class="flex align-items-center justify-content-between mb-4">
       <div>
-        <h1>Welcome back, {{ authStore.user?.firstName || 'User' }} 👋</h1>
-        <p class="subtitle">
-          {{ authStore.user?.role === 'admin' ? 'Administrator' : 'Employee' }} &mdash;
-          {{ today }}
+        <h1 class="text-3xl font-bold text-900 mb-1">
+          Welcome back, {{ authStore.user?.firstName || 'User' }} 👋
+        </h1>
+        <p class="text-600 m-0">
+          {{ authStore.user?.role === 'admin' ? 'Administrator' : 'Employee' }}
+          &nbsp;&mdash;&nbsp;{{ today }}
         </p>
       </div>
     </div>
 
-    <div class="dashboard-grid">
-      <div class="card">
-        <div class="card-icon" style="background: #e8f4ff;">📋</div>
-        <div>
-          <h3>Today's Tasks</h3>
-          <p class="value">0</p>
-          <p class="card-note">No tasks logged yet</p>
+    <!-- Stat Cards -->
+    <div class="grid mb-4">
+      <div class="col-12 md:col-6 lg:col-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#e8f4ff">📋</div>
+          <div>
+            <div class="stat-label">TODAY'S TASKS</div>
+            <div class="stat-value">0</div>
+            <div class="stat-note">No tasks logged yet</div>
+          </div>
         </div>
       </div>
 
-      <div class="card" v-if="authStore.user?.role === 'admin'">
-        <div class="card-icon" style="background: #e8fff4;">👥</div>
-        <div>
-          <h3>Active Employees</h3>
-          <p class="value">{{ stats.activeEmployees ?? '—' }}</p>
-          <p class="card-note">Currently active staff</p>
+      <div v-if="authStore.user?.role === 'admin'" class="col-12 md:col-6 lg:col-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#e8fff4">👥</div>
+          <div>
+            <div class="stat-label">ACTIVE EMPLOYEES</div>
+            <div class="stat-value">{{ stats.activeEmployees ?? '—' }}</div>
+            <div class="stat-note">Currently active staff</div>
+          </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-icon" style="background: #fff4e8;">💰</div>
-        <div>
-          <h3>Today's Revenue</h3>
-          <p class="value">₹0</p>
-          <p class="card-note">No sales recorded yet</p>
+      <div class="col-12 md:col-6 lg:col-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fff4e8">💰</div>
+          <div>
+            <div class="stat-label">TODAY'S REVENUE</div>
+            <div class="stat-value">₹0</div>
+            <div class="stat-note">No sales yet</div>
+          </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-icon" style="background: #f4e8ff;">✅</div>
-        <div>
-          <h3>Services Completed</h3>
-          <p class="value">0</p>
-          <p class="card-note">This month</p>
+      <div class="col-12 md:col-6 lg:col-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f4e8ff">✅</div>
+          <div>
+            <div class="stat-label">SERVICES THIS MONTH</div>
+            <div class="stat-value">0</div>
+            <div class="stat-note">Completed services</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="quick-actions" v-if="authStore.user?.role === 'admin'">
-      <h2>Quick Actions</h2>
-      <div class="actions-row">
-        <router-link to="/employees" class="action-btn">
-          <span>👥</span> Manage Employees
-        </router-link>
-        <router-link to="/services" class="action-btn">
-          <span>✂️</span> Manage Services
-        </router-link>
-        <router-link to="/tasks" class="action-btn">
-          <span>📋</span> View All Tasks
-        </router-link>
-      </div>
-    </div>
-
-    <div class="quick-actions" v-else>
-      <h2>Quick Actions</h2>
-      <div class="actions-row">
-        <router-link to="/tasks" class="action-btn primary">
-          <span>➕</span> Log New Task
-        </router-link>
-      </div>
-    </div>
+    <!-- Quick Actions -->
+    <Card>
+      <template #title>Quick Actions</template>
+      <template #content>
+        <div class="flex gap-3 flex-wrap">
+          <template v-if="authStore.user?.role === 'admin'">
+            <Button as="router-link" to="/employees" label="Manage Employees" icon="pi pi-users" severity="secondary" outlined />
+            <Button as="router-link" to="/services" label="Manage Services" icon="pi pi-star" severity="secondary" outlined />
+            <Button as="router-link" to="/packages" label="Manage Packages" icon="pi pi-box" severity="secondary" outlined />
+          </template>
+          <Button as="router-link" to="/tasks" label="Log Task" icon="pi pi-plus" />
+        </div>
+      </template>
+    </Card>
   </div>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import Button from 'primevue/button';
+import Card from 'primevue/card';
+import { onMounted, reactive } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import userService from '../services/userService';
 
@@ -91,128 +96,52 @@ onMounted(async () => {
     try {
       const res = await userService.getStats();
       stats.activeEmployees = res.data.activeEmployees;
-    } catch (e) {
-      // stats remain null — will show '—'
-    }
+    } catch { /* show '—' */ }
   }
 });
 </script>
 
 <style scoped>
-.dashboard {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+.dashboard-page { max-width: 1200px; margin: 0 auto; }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
-}
-
-.page-header h1 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1.8rem;
-}
-
-.subtitle {
-  margin: 0;
-  color: #666;
-  font-size: 0.95rem;
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.card {
+.stat-card {
   background: white;
-  padding: 1.5rem;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 1.25rem 1.5rem;
   display: flex;
   align-items: flex-start;
   gap: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  height: 100%;
 }
 
-.card-icon {
-  font-size: 1.5rem;
+.stat-icon {
+  font-size: 1.4rem;
   padding: 0.6rem;
   border-radius: 8px;
   min-width: 48px;
   text-align: center;
+  flex-shrink: 0;
 }
 
-.card h3 {
-  margin: 0 0 0.25rem 0;
-  color: #555;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.stat-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.25rem;
 }
 
-.card .value {
-  margin: 0 0 0.25rem 0;
+.stat-value {
   font-size: 2rem;
-  font-weight: bold;
-  color: #333;
+  font-weight: 700;
+  color: #1e1e2e;
+  line-height: 1;
+  margin-bottom: 0.25rem;
 }
 
-.card-note {
-  margin: 0;
-  font-size: 0.78rem;
-  color: #999;
-}
-
-.quick-actions {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.quick-actions h2 {
-  margin: 0 0 1rem 0;
-  font-size: 1rem;
-  color: #333;
-}
-
-.actions-row {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  background: #f0f0f0;
-  color: #333;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-
-.action-btn:hover {
-  background: #e0e0e0;
-}
-
-.action-btn.primary {
-  background: #667eea;
-  color: white;
-}
-
-.action-btn.primary:hover {
-  background: #5568d3;
+.stat-note {
+  font-size: 0.76rem;
+  color: #aaa;
 }
 </style>
-

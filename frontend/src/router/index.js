@@ -39,6 +39,18 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
+    path: '/service-categories',
+    name: 'ServiceCategories',
+    component: () => import('../pages/ServiceCategories.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/packages',
+    name: 'Packages',
+    component: () => import('../pages/Packages.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
     path: '/',
     redirect: '/dashboard',
   },
