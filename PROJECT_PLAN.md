@@ -155,50 +155,30 @@ Develop a comprehensive Salon Point-of-Sale (POS) system built for daily salon o
 - [x] Dashboard "This Month's Commission" card wired to real data
 - [x] Navbar Commissions link (all authenticated users)
 
-#### 1.8 Reports & Analytics — 🔵 Week 5 (IN PROGRESS)
+#### 1.8 Reports & Analytics — ✅ Week 5 (COMPLETE)
 
-**Sales Reports:**
+- [x] `Report.js` model: `getSalesSummary()`, `getEmployeeReport()`, `getServiceReport()` (completed tasks only)
+- [x] `GET /api/reports/sales?from=&to=` — daily breakdown + totals
+- [x] `GET /api/reports/employees?from=&to=` — per-employee tasks, revenue, commission
+- [x] `GET /api/reports/services?from=&to=` — service popularity ranked by task count
+- [x] All report routes admin-only via `requireAdmin` middleware
+- [x] `Reports.vue` — 3 tabs (Sales with bar chart, Employees DataTable, Services DataTable + horizontal bar)
+- [x] Date range DatePicker (default: current month), `reportService.js`
+- [ ] PDF/CSV export — deferred to later sprint
 
-- [ ] Daily sales summary
-- [ ] Monthly sales overview
-- [ ] Payment method breakdown
-- [ ] Tax report (if applicable)
+#### 1.9 Security & Controls — 🔵 Week 6 (IN PROGRESS)
 
-**Employee Reports:**
+**Already implemented:**
+- [x] RBAC enforcement — `authenticateToken` + `requireAdmin` on all protected routes
+- [x] Rate limiting — `authLimiter` on `/api/auth` (express-rate-limit)
+- [x] Input validation & XSS protection — Joi schemas on all mutating endpoints
+- [x] SQL injection prevention — parameterized queries throughout
+- [x] Auto-lock past data — 24-hour lock on tasks (backend enforced)
 
-- [ ] Services completed (individual & total)
-- [ ] Revenue generated per employee
-- [ ] Commission earned report
-
-**Service Reports:**
-
-- [ ] Most popular services
-- [ ] Revenue by service
-- [ ] Service duration analytics
-
-**Backend:**
-
-- [ ] GET `/api/reports/sales?date_range=...`
-- [ ] GET `/api/reports/employees?month=...`
-- [ ] GET `/api/reports/services?date_range=...`
-
-**Frontend:**
-
-- [ ] Reports dashboard
-- [ ] Date range filters
-- [ ] Export to PDF/CSV
-- [ ] Chart visualizations (Chart.js or PrimeVue charts)
-
-#### 1.9 Security & Controls (4-5 days)
-
-- [ ] Role-based access control (RBAC) enforcement
-- [ ] Audit logging middleware (who, what, when, why)
-- [ ] Auto-lock past data (can't edit after 24 hours)
-- [ ] Soft delete implementation (is_deleted flag)
-- [ ] Manual backup scripts
-- [ ] Input validation & XSS protection
-- [ ] SQL injection prevention (parameterized queries)
-- [ ] Rate limiting on login/API endpoints
+**To implement:**
+- [ ] Audit logging middleware — log user, action, table, old/new data, IP, timestamp to `audit_logs` table
+- [ ] Soft-delete enforcement — ensure all DELETE operations set `is_deleted=1` (review existing routes)
+- [ ] Manual DB backup script — `npm run backup` dumps SQL to timestamped file
 
 #### 1.10 UI/UX & Polish (3-4 days)
 

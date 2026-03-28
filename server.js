@@ -42,6 +42,14 @@ import reportRoutes from './server/routes/reports.js';
 import serviceRoutes from './server/routes/services.js';
 import taskRoutes from './server/routes/tasks.js';
 import userRoutes from './server/routes/users.js';
+import auditLog from './server/middleware/auditMiddleware.js';
+import { authenticateToken } from './server/middleware/authMiddleware.js';
+
+// Global audit middleware — logs all mutating requests for authenticated users
+app.use('/api', (req, res, next) => {
+  if (req.path.startsWith('/auth')) return next(); // skip auth routes (no user yet)
+  return auditLog()(req, res, next);
+});
 
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/users', userRoutes);
