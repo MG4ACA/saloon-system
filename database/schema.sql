@@ -149,7 +149,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   created_by INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (employee_id) REFERENCES employees(id),
+  FOREIGN KEY (employee_id) REFERENCES users(id),
   FOREIGN KEY (customer_id) REFERENCES customers(id),
   FOREIGN KEY (service_id) REFERENCES services(id),
   FOREIGN KEY (location_id) REFERENCES locations(id),
@@ -161,6 +161,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   INDEX idx_created_at (created_at),
   INDEX idx_location (location_id)
 );
+
 
 -- Products (Inventory items)
 CREATE TABLE IF NOT EXISTS products (

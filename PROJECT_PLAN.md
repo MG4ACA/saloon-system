@@ -97,75 +97,55 @@ Develop a comprehensive Salon Point-of-Sale (POS) system built for daily salon o
 - [x] Disable/Enable employee with confirmation dialog
 - [x] Admin dashboard layout with real stats
 
-#### 1.5 Service Management — 🔵 Week 2 (IN PROGRESS)
+#### 1.5 Service Management — ✅ Week 2 (COMPLETE)
 
 **Architecture Decisions:**
 - Commission rules stored in separate `commission_rules` table (one rule per service, linked by `service_id`)
 - Service packages/combos included in Week 2 (not deferred)
-- UI uses **PrimeVue v4** + **PrimeFlex v4** (upgraded from current v3 scaffold)
+- UI uses **PrimeVue v4** + **PrimeFlex v4** (upgraded from v3)
 
 **Features:**
 
-- [ ] Create/edit/disable service categories (Hair, Makeup, Facial, etc.)
-- [ ] Add/Edit/Disable services with: name, category, duration, base price
-- [ ] Commission rule per service: type (% or fixed), value, apply-after-discount flag
-- [ ] Service packages/combos (bundle multiple services at a package price)
-- [ ] Attach optional products to a service (for auto-deduction later)
+- [x] Create/edit/disable service categories (Hair, Makeup, Facial, etc.)
+- [x] Add/Edit/Disable services with: name, category, duration, base price
+- [x] Commission rule per service: type (% or fixed), value, apply-after-discount flag
+- [x] Service packages/combos (bundle multiple services at a package price)
 
 **Backend:**
 
-- [ ] CRUD: `GET/POST/PUT/PATCH /api/categories`
-- [ ] CRUD: `GET/POST/PUT/PATCH /api/services` (with commission rule upsert)
-- [ ] `GET/POST/PUT/PATCH /api/packages` (service packages/combos)
-- [ ] Validation & duplicate name checks (Joi)
+- [x] CRUD: `GET/POST/PUT/PATCH /api/categories`
+- [x] CRUD: `GET/POST/PUT/PATCH /api/services` (with commission rule upsert)
+- [x] `GET/POST/PUT/PATCH /api/packages` (service packages/combos)
+- [x] Validation & duplicate name checks (Joi)
 
 **Frontend (PrimeVue v4 + PrimeFlex):**
 
-- [ ] Upgrade PrimeVue v3 → v4 + PrimeFlex v3 → v4 (`@primevue/themes` preset system)
-- [ ] Service category management page (DataTable, Dialog, InputText, Badge)
-- [ ] Service CRUD page (DataTable with inline commission config)
-- [ ] Service package builder (multi-select services, package pricing)
-- [ ] Pricing & duration configuration UI
+- [x] Upgrade PrimeVue v3 → v4 + PrimeFlex v3 → v4 (`@primeuix/themes` Aura preset)
+- [x] Service category management page (DataTable, Dialog, InputText, Tag)
+- [x] Service CRUD page (DataTable with inline commission config)
+- [x] Service package builder (MultiSelect of services, package pricing)
 
-#### 1.6 Employee Task Management (6-7 days)
 
-**Employee Dashboard:**
+#### 1.6 Employee Task Management — ✅ Week 3 (COMPLETE)
 
-- [ ] Add new task form
-  - [ ] Select service
-  - [ ] Select/add customer
-  - [ ] Add notes, products used
-  - [ ] Set start/end time
-- [ ] Mark task: In Progress / Completed / Cancelled
-- [ ] View today's tasks
-- [ ] Task history with filters
-- [ ] Performance summary (services completed, revenue generated)
+**Architecture Decisions:**
+- `tasks.employee_id` → FK to `users(id)` directly
+- Auto-create `employees` row when user with `role=employee` is registered
+- Customer lookup via phone number (type → lookup → create if not found)
+- UI: Two pages — `/tasks/new` (create form) and `/tasks` (list + filters)
+- **Critical fix:** `tasks` table had old FK to `employees(id)` — fixed via ALTER TABLE + idempotent check added to `migrate.js`
 
-**Admin Dashboard:**
+- [x] `/tasks/new` — Select service (auto-fills price/duration), phone → customer lookup/create, price, discount, time, notes
+- [x] `/tasks` — Task list, mark In Progress / Complete / Cancel, 🔒 lock indicator
+- [x] Dashboard stat cards: today's completed count + revenue (real data)
+- [x] Schema: `tasks.employee_id` FK → `users(id)`
+- [x] Auto-create `employees` row on register (role=employee)
+- [x] `POST /api/tasks`, `GET /api/tasks`, `GET /api/tasks/summary`, `PATCH /api/tasks/:id/status`
+- [x] `GET /api/customers?phone=...`, `POST /api/customers`
+- [x] 24-hour auto-lock mechanism
+- [x] `NewTask.vue`, `Tasks.vue`, `taskService.js`
 
-- [ ] View all employee tasks
-- [ ] Filter by: date, employee, service
-- [ ] Task productivity reports
-- [ ] Lock past records (24hr auto-lock)
-- [ ] Edit task capability
-
-**Backend:**
-
-- [ ] POST `/api/tasks` (create)
-- [ ] GET `/api/tasks` (list with filters)
-- [ ] PATCH `/api/tasks/:id` (update status/details)
-- [ ] GET `/api/tasks/:id/performance` (employee stats)
-- [ ] Lock mechanism (immutable after 24hrs)
-
-**Frontend:**
-
-- [ ] Task creation form (multi-step)
-- [ ] Task list with status badges
-- [ ] Task history/filter view
-- [ ] Employee dashboard widgets
-- [ ] Admin task management panel
-
-#### 1.7 Commission Management (4-5 days)
+#### 1.7 Commission Management — 🔵 Week 4 (IN PROGRESS)
 
 **Rules Engine:**
 

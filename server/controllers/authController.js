@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import pool from '../config/database.js';
 import { User } from '../models/User.js';
 
 // Register a new user (admin only)
@@ -26,6 +27,14 @@ export const register = async (req, res) => {
       role,
     });
 
+    // Auto-create employees profile row for employee users
+    if (role === 'employee') {
+      await pool.query(
+        `INSERT IGNORE INTO employees (user_id, salary_type, is_active) VALUES (?, 'commission', 1)`,
+        [userId]
+      );
+    }
+
     // Get the newly created user (without password)
     const newUser = await User.findById(userId);
     const userResponse = {
@@ -43,6 +52,7 @@ export const register = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 // Login user
 export const login = async (req, res) => {

@@ -29,6 +29,32 @@ const runMigrations = async () => {
     // Run the whole schema as multi-statement query
     await connection.query(schemaSql);
 
+    // ── Post-migration fixes ──────────────────────────────────────────────────
+    // Fix tasks.employee_id FK: ensure it references users(id), not employees(id).
+    // CREATE TABLE IF NOT EXISTS does not ALTER existing tables, so we fix it here.
+    try {
+      const [fks] = await connection.query(`
+        SELECT CONSTRAINT_NAME
+        FROM information_schema.KEY_COLUMN_USAGE
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'tasks'
+          AND COLUMN_NAME = 'employee_id'
+          AND REFERENCED_TABLE_NAME = 'employees'
+      `);
+      for (const fk of fks) {
+        await connection.query(`ALTER TABLE tasks DROP FOREIGN KEY \`${fk.CONSTRAINT_NAME}\``);
+        await connection.query(`
+          ALTER TABLE tasks
+          ADD CONSTRAINT fk_tasks_employee_user
+          FOREIGN KEY (employee_id) REFERENCES users(id)
+        `);
+        console.log('🔧 Fixed tasks.employee_id FK → users(id)');
+      }
+    } catch (fkErr) {
+      // Ignore if already correct
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     console.log('✨ Database migration completed successfully!');
     console.log('✅ All tables created / verified.');
     await connection.end();

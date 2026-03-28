@@ -20,8 +20,8 @@
           <div class="stat-icon" style="background:#e8f4ff">📋</div>
           <div>
             <div class="stat-label">TODAY'S TASKS</div>
-            <div class="stat-value">0</div>
-            <div class="stat-note">No tasks logged yet</div>
+            <div class="stat-value">{{ summary.todayCount ?? '—' }}</div>
+            <div class="stat-note">{{ summary.completedCount ?? 0 }} completed</div>
           </div>
         </div>
       </div>
@@ -42,8 +42,8 @@
           <div class="stat-icon" style="background:#fff4e8">💰</div>
           <div>
             <div class="stat-label">TODAY'S REVENUE</div>
-            <div class="stat-value">₹0</div>
-            <div class="stat-note">No sales yet</div>
+            <div class="stat-value">₹{{ Number(summary.todayRevenue ?? 0).toFixed(0) }}</div>
+            <div class="stat-note">From {{ summary.todayCount ?? 0 }} tasks today</div>
           </div>
         </div>
       </div>
@@ -82,24 +82,39 @@ import Button from 'primevue/button';
 import Card from 'primevue/card';
 import { onMounted, reactive } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import taskService from '../services/taskService';
 import userService from '../services/userService';
 
 const authStore = useAuthStore();
-const stats = reactive({ activeEmployees: null });
+const stats   = reactive({ activeEmployees: null });
+const summary = reactive({ todayCount: null, todayRevenue: 0, completedCount: 0 });
 
 const today = new Date().toLocaleDateString('en-IN', {
   weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
 });
 
 onMounted(async () => {
+  const calls = [];
+
+  // Fetch today's task summary for everyone
+  calls.push(
+    taskService.getTaskSummary()
+      .then((res) => { Object.assign(summary, res.data.summary); })
+      .catch(() => {})
+  );
+
   if (authStore.user?.role === 'admin') {
-    try {
-      const res = await userService.getStats();
-      stats.activeEmployees = res.data.activeEmployees;
-    } catch { /* show '—' */ }
+    calls.push(
+      userService.getStats()
+        .then((res) => { stats.activeEmployees = res.data.activeEmployees; })
+        .catch(() => {})
+    );
   }
+
+  await Promise.all(calls);
 });
 </script>
+
 
 <style scoped>
 .dashboard-page { max-width: 1200px; margin: 0 auto; }

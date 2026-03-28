@@ -92,6 +92,41 @@ const statusSchema = Joi.object({
   }),
 });
 
+const taskSchema = Joi.object({
+  serviceId: Joi.number().integer().required().messages({
+    'any.required': 'Service is required',
+  }),
+  customerId: Joi.number().integer().allow(null),
+  startTime: Joi.date().iso().required().messages({
+    'any.required': 'Start time is required',
+  }),
+  endTime: Joi.date().iso().allow(null),
+  price: Joi.number().precision(2).min(0).required().messages({
+    'any.required': 'Price is required',
+  }),
+  discountType: Joi.string().valid('percentage', 'fixed').allow(null),
+  discountValue: Joi.number().precision(2).min(0).allow(null),
+  notes: Joi.string().max(500).allow('', null),
+  status: Joi.string().valid('pending', 'in_progress', 'completed', 'cancelled').default('pending'),
+});
+
+const taskStatusSchema = Joi.object({
+  status: Joi.string().valid('pending', 'in_progress', 'completed', 'cancelled').required().messages({
+    'any.required': 'Status is required',
+    'any.only': 'Status must be one of: pending, in_progress, completed, cancelled',
+  }),
+});
+
+const customerSchema = Joi.object({
+  phone: Joi.string().min(7).max(20).required().messages({
+    'any.required': 'Phone number is required',
+  }),
+  name: Joi.string().min(1).max(255).required().messages({
+    'any.required': 'Customer name is required',
+  }),
+  email: Joi.string().email().allow('', null),
+});
+
 // Generic validate middleware factory
 export const validate = (schema) => (req, res, next) => {
   const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -105,11 +140,14 @@ export const validate = (schema) => (req, res, next) => {
 
 export {
   categorySchema,
+  customerSchema,
   loginSchema,
   packageSchema,
   registerSchema,
   serviceSchema,
   statusSchema,
+  taskSchema,
+  taskStatusSchema,
   updateStatusSchema,
   updateUserSchema,
 };

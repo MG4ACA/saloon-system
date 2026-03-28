@@ -35,8 +35,10 @@ app.get('/api/health', (req, res) => {
 // API Routes
 import authRoutes from './server/routes/auth.js';
 import categoryRoutes from './server/routes/categories.js';
+import customerRoutes from './server/routes/customers.js';
 import packageRoutes from './server/routes/packages.js';
 import serviceRoutes from './server/routes/services.js';
+import taskRoutes from './server/routes/tasks.js';
 import userRoutes from './server/routes/users.js';
 
 app.use('/api/auth', authLimiter, authRoutes);
@@ -44,6 +46,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/packages', packageRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/customers', customerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
