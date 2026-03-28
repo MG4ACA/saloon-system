@@ -3,9 +3,16 @@ import { computed, ref } from 'vue';
 import api from '../services/api';
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref(null);
+  // Restore persisted state from localStorage on init
+  const storedUser = localStorage.getItem('user');
+  const user = ref(storedUser ? JSON.parse(storedUser) : null);
   const token = ref(localStorage.getItem('token') || null);
   const refreshToken = ref(localStorage.getItem('refreshToken') || null);
+
+  // Restore Authorization header if token exists on page reload
+  if (token.value) {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
+  }
 
   const isAuthenticated = computed(() => !!token.value && !!user.value);
 
@@ -22,16 +29,17 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
+  // Returns { success: true } or { success: false, message: '...' }
   const login = async (email, password) => {
     try {
       const response = await api.post('/auth/login', { email, password });
       const { accessToken, refreshToken: refreshTok, user: userData } = response.data;
       setTokens(accessToken, refreshTok);
       setUser(userData);
-      return true;
+      return { success: true };
     } catch (error) {
-      console.error('Login failed:', error);
-      return false;
+      const message = error.response?.data?.error || 'Login failed. Please try again.';
+      return { success: false, message };
     }
   };
 

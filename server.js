@@ -2,35 +2,42 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import 'express-async-errors';
+import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+}));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Rate limiting for auth routes (10 requests per 15 minutes)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Routes
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
 
-// Import routes (to be added during Phase 1)
-import authRoutes from './routes/auth.js';
-app.use('/api/auth', authRoutes);
-// app.use('/api/users', userRoutes)
-// app.use('/api/services', serviceRoutes)
-// app.use('/api/tasks', taskRoutes)
-// app.use('/api/reports', reportRoutes)
+// API Routes
+import authRoutes from './server/routes/auth.js';
+import userRoutes from './server/routes/users.js';
+
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/users', userRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -51,3 +58,4 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
+

@@ -36,11 +36,11 @@ const error = ref('');
 const handleLogin = async () => {
   loading.value = true;
   error.value = '';
-  const success = await authStore.login(email.value, password.value);
-  if (success) {
+  const result = await authStore.login(email.value, password.value);
+  if (result.success) {
     router.push('/dashboard');
   } else {
-    error.value = 'Invalid email or password';
+    error.value = result.message;
   }
   loading.value = false;
 };
