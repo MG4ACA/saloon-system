@@ -1,11 +1,14 @@
 <template>
   <div class="categories-page">
-    <div class="flex align-items-center justify-content-between mb-4">
-      <h1 class="text-2xl font-bold text-900 m-0">Service Categories</h1>
+    <div class="page-header mb-4">
+      <div class="flex align-items-center gap-2">
+        <BackButton to="/dashboard" />
+        <h1 class="text-2xl font-bold text-900 m-0">Service Categories</h1>
+      </div>
       <Button label="Add Category" icon="pi pi-plus" @click="openModal()" />
     </div>
 
-    <DataTable :value="categories" :loading="loading" stripedRows dataKey="id" class="p-datatable-sm">
+    <DataTable :value="categories" :loading="loading" stripedRows dataKey="id" class="p-datatable-sm desktop-table">
       <template #empty>No categories found.</template>
       <Column field="name" header="Name" />
       <Column field="description" header="Description">
@@ -35,6 +38,32 @@
         </template>
       </Column>
     </DataTable>
+
+    <!-- Mobile card list -->
+    <div class="mobile-cards">
+      <div v-if="loading" class="text-center py-4 text-600"><i class="pi pi-spin pi-spinner" /> Loading...</div>
+      <div v-else-if="!categories.length" class="text-center py-4 text-400">No categories found.</div>
+      <div v-for="cat in categories" :key="cat.id" class="cat-card">
+        <div class="cat-card-top">
+          <div>
+            <div class="cat-card-name">{{ cat.name }}</div>
+            <div class="cat-card-desc">{{ cat.description || '—' }}</div>
+          </div>
+          <div class="flex gap-1">
+            <Tag :value="String(cat.serviceCount ?? 0) + ' svcs'" severity="secondary" />
+            <Tag :value="cat.is_deleted ? 'Inactive' : 'Active'" :severity="cat.is_deleted ? 'danger' : 'success'" />
+          </div>
+        </div>
+        <div class="cat-card-actions">
+          <Button icon="pi pi-pencil" label="Edit" size="small" outlined @click="openModal(cat)" />
+          <Button
+            :icon="cat.is_deleted ? 'pi pi-check-circle' : 'pi pi-ban'"
+            :label="cat.is_deleted ? 'Activate' : 'Deactivate'"
+            :severity="cat.is_deleted ? 'success' : 'danger'"
+            size="small" outlined @click="toggleStatus(cat)" />
+        </div>
+      </div>
+    </div>
 
     <!-- Add / Edit Dialog -->
     <Dialog v-model:visible="showModal" :header="editTarget ? 'Edit Category' : 'Add Category'" :style="{ width: '420px' }" modal>
@@ -68,6 +97,7 @@ import Tag from 'primevue/tag';
 import Textarea from 'primevue/textarea';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, reactive, ref } from 'vue';
+import BackButton from '../components/BackButton.vue';
 import serviceService from '../services/serviceService';
 
 const toast = useToast();
@@ -135,6 +165,26 @@ onMounted(fetchCategories);
 
 <style scoped>
 .categories-page { max-width: 900px; margin: 0 auto; }
+.page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
 .field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
 .field label { font-size: 0.85rem; font-weight: 600; color: #555; }
+
+.desktop-table { display: block; }
+.mobile-cards  { display: none; }
+@media (max-width: 768px) {
+  .desktop-table { display: none !important; }
+  .mobile-cards  { display: block; }
+}
+
+.cat-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.cat-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.6rem; }
+.cat-card-name { font-weight: 600; font-size: 0.95rem; color: #1e1e2e; }
+.cat-card-desc { font-size: 0.78rem; color: #888; margin-top: 2px; }
+.cat-card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 </style>

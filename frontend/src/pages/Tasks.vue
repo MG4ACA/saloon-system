@@ -1,7 +1,10 @@
 <template>
   <div class="tasks-page">
-    <div class="flex align-items-center justify-content-between mb-4">
-      <h1 class="text-2xl font-bold text-900 m-0">Tasks</h1>
+    <div class="page-header mb-4">
+      <div class="flex align-items-center gap-2">
+        <BackButton to="/dashboard" />
+        <h1 class="text-2xl font-bold text-900 m-0">Tasks</h1>
+      </div>
       <Button label="New Task" icon="pi pi-plus" @click="$router.push('/tasks/new')" />
     </div>
 
@@ -24,7 +27,7 @@
       <Button icon="pi pi-refresh" text rounded @click="loadTasks" title="Refresh" />
     </div>
 
-    <DataTable :value="tasks" :loading="loading" stripedRows dataKey="id" class="p-datatable-sm" paginator :rows="20">
+    <DataTable :value="tasks" :loading="loading" stripedRows dataKey="id" class="p-datatable-sm desktop-table" paginator :rows="20">
       <template #empty>No tasks found for the selected filters.</template>
 
       <Column v-if="isAdmin" header="Employee">
@@ -90,6 +93,44 @@
         </template>
       </Column>
     </DataTable>
+
+    <!-- Mobile card list -->
+    <div class="mobile-cards">
+      <div v-if="loading" class="text-center py-4 text-600"><i class="pi pi-spin pi-spinner" /> Loading...</div>
+      <div v-else-if="!tasks.length" class="text-center py-4 text-400">No tasks found.</div>
+      <div v-for="task in tasks" :key="task.id" class="task-card">
+        <div class="task-card-top">
+          <div>
+            <div class="task-card-service">{{ task.serviceName }}</div>
+            <div class="task-card-sub">
+              <span v-if="isAdmin">{{ task.employeeFirstName }} {{ task.employeeLastName }} &bull; </span>
+              <span v-if="task.customerName">{{ task.customerName }}</span>
+              <span v-else class="text-400">Walk-in</span>
+            </div>
+          </div>
+          <Tag :value="statusLabel(task.status)" :severity="statusSeverity(task.status)" />
+        </div>
+        <div class="task-card-meta">
+          <span>LKR {{ Number(task.price).toFixed(2) }}</span>
+          <span>{{ formatTime(task.start_time) }}</span>
+          <i v-if="task.is_locked" class="pi pi-lock text-400" title="Locked" />
+        </div>
+        <div class="task-card-actions" v-if="!task.is_locked">
+          <Button
+            v-if="task.status === 'pending'"
+            label="Start" icon="pi pi-play" size="small" severity="info" outlined
+            @click="changeStatus(task, 'in_progress')" />
+          <Button
+            v-if="task.status === 'in_progress'"
+            label="Complete" icon="pi pi-check" size="small" severity="success" outlined
+            @click="confirmComplete(task)" />
+          <Button
+            v-if="['pending','in_progress'].includes(task.status)"
+            label="Cancel" icon="pi pi-times" size="small" severity="danger" outlined
+            @click="confirmCancel(task)" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -103,9 +144,10 @@ import Tag from 'primevue/tag';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, ref } from 'vue';
-import { useAuthStore } from '../stores/auth';
-import taskService from '../services/taskService';
+import BackButton from '../components/BackButton.vue';
 import api from '../services/api';
+import taskService from '../services/taskService';
+import { useAuthStore } from '../stores/auth';
 
 const toast   = useToast();
 const confirm = useConfirm();
@@ -211,6 +253,44 @@ onMounted(async () => {
 
 <style scoped>
 .tasks-page { max-width: 1300px; margin: 0 auto; }
+.page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
 .filters-bar { background: var(--p-surface-card); border-radius: 10px; padding: 0.75rem 1rem; }
-.filter-input { min-width: 180px; }
+.filter-input { min-width: 160px; }
+
+/* Desktop: show table, hide cards */
+.desktop-table { display: block; }
+.mobile-cards  { display: none; }
+
+@media (max-width: 768px) {
+  .desktop-table { display: none !important; }
+  .mobile-cards  { display: block; }
+  .filter-input  { min-width: 0; flex: 1; }
+}
+
+.task-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.task-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.task-card-service { font-weight: 600; font-size: 0.95rem; color: #1e1e2e; }
+.task-card-sub { font-size: 0.78rem; color: #888; margin-top: 2px; }
+.task-card-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.task-card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 </style>

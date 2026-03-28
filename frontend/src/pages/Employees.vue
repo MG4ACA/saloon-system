@@ -1,8 +1,11 @@
 <template>
   <div class="employees-page">
     <!-- Header -->
-    <div class="flex align-items-center justify-content-between mb-4">
-      <h1 class="text-2xl font-bold text-900 m-0">Employee Management</h1>
+    <div class="page-header mb-4">
+      <div class="flex align-items-center gap-2">
+        <BackButton to="/dashboard" />
+        <h1 class="text-2xl font-bold text-900 m-0">Employee Management</h1>
+      </div>
       <Button label="Add Employee" icon="pi pi-plus" @click="openAddModal" />
     </div>
 
@@ -14,7 +17,7 @@
       paginator
       :rows="10"
       dataKey="id"
-      class="p-datatable-sm"
+      class="p-datatable-sm desktop-table"
     >
       <template #empty>No employees found.</template>
       <template #loading>Loading employees...</template>
@@ -48,6 +51,32 @@
         </template>
       </Column>
     </DataTable>
+
+    <!-- Mobile card list -->
+    <div class="mobile-cards">
+      <div v-if="loading" class="text-center py-4 text-600"><i class="pi pi-spin pi-spinner" /> Loading...</div>
+      <div v-else-if="!employees.length" class="text-center py-4 text-400">No employees found.</div>
+      <div v-for="emp in employees" :key="emp.id" class="emp-card">
+        <div class="emp-card-top">
+          <div>
+            <div class="emp-card-name">{{ emp.firstName }} {{ emp.lastName }}</div>
+            <div class="emp-card-email">{{ emp.email }}</div>
+          </div>
+          <div class="flex gap-1 align-items-center">
+            <Tag :value="emp.role" :severity="emp.role === 'admin' ? 'info' : 'secondary'" />
+            <Tag :value="emp.isActive ? 'Active' : 'Disabled'" :severity="emp.isActive ? 'success' : 'danger'" />
+          </div>
+        </div>
+        <div class="emp-card-meta">Last login: {{ emp.lastLogin ? formatDate(emp.lastLogin) : 'Never' }}</div>
+        <div class="emp-card-actions">
+          <Button
+            :label="emp.isActive ? 'Disable' : 'Enable'"
+            :severity="emp.isActive ? 'danger' : 'success'"
+            size="small" outlined
+            @click="confirmToggle(emp)" />
+        </div>
+      </div>
+    </div>
 
     <!-- Add Employee Dialog -->
     <Dialog v-model:visible="showAddModal" header="Add New Employee" :style="{ width: '480px' }" modal>
@@ -97,6 +126,7 @@ import Tag from 'primevue/tag';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, reactive, ref } from 'vue';
+import BackButton from '../components/BackButton.vue';
 import userService from '../services/userService';
 
 const toast = useToast();
@@ -176,6 +206,28 @@ onMounted(fetchEmployees);
 
 <style scoped>
 .employees-page { max-width: 1200px; margin: 0 auto; }
+.page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
 .field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.25rem; }
 .field label { font-size: 0.85rem; font-weight: 600; color: #555; }
+
+.desktop-table { display: block; }
+.mobile-cards  { display: none; }
+
+@media (max-width: 768px) {
+  .desktop-table { display: none !important; }
+  .mobile-cards  { display: block; }
+}
+
+.emp-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.emp-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.4rem; }
+.emp-card-name { font-weight: 600; font-size: 0.95rem; color: #1e1e2e; }
+.emp-card-email { font-size: 0.78rem; color: #888; }
+.emp-card-meta { font-size: 0.78rem; color: #aaa; margin-bottom: 0.6rem; }
+.emp-card-actions { display: flex; gap: 0.5rem; }
 </style>

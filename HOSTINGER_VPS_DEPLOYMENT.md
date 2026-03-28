@@ -233,7 +233,7 @@ PORT=3007
 HOST=0.0.0.0
 
 # JWT Configuration
-JWT_SECRET=your_super_secret_jwt_key_here_change_this_to_random_string
+JWT_SECRET=
 JWT_EXPIRES_IN=24h
 
 # Frontend URL (for CORS)

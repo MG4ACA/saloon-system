@@ -1,12 +1,12 @@
 <template>
   <div class="dashboard-page">
     <!-- Welcome Header -->
-    <div class="flex align-items-center justify-content-between mb-4">
+    <div class="dashboard-header mb-4">
       <div>
-        <h1 class="text-3xl font-bold text-900 mb-1">
+        <h1 class="dashboard-greeting">
           Welcome back, {{ authStore.user?.firstName || 'User' }} 👋
         </h1>
-        <p class="text-600 m-0">
+        <p class="text-600 m-0 text-sm">
           {{ authStore.user?.role === 'admin' ? 'Administrator' : 'Employee' }}
           &nbsp;&mdash;&nbsp;{{ today }}
         </p>
@@ -64,13 +64,15 @@
     <Card>
       <template #title>Quick Actions</template>
       <template #content>
-        <div class="flex gap-3 flex-wrap">
+        <div class="quick-actions-grid">
+          <Button as="router-link" to="/tasks/new" label="New Task" icon="pi pi-plus" class="quick-action-btn" />
+          <Button as="router-link" to="/tasks" label="View Tasks" icon="pi pi-list" severity="secondary" outlined class="quick-action-btn" />
           <template v-if="authStore.user?.role === 'admin'">
-            <Button as="router-link" to="/employees" label="Manage Employees" icon="pi pi-users" severity="secondary" outlined />
-            <Button as="router-link" to="/services" label="Manage Services" icon="pi pi-star" severity="secondary" outlined />
-            <Button as="router-link" to="/packages" label="Manage Packages" icon="pi pi-box" severity="secondary" outlined />
+            <Button as="router-link" to="/employees" label="Employees" icon="pi pi-users" severity="secondary" outlined class="quick-action-btn" />
+            <Button as="router-link" to="/services" label="Services" icon="pi pi-star" severity="secondary" outlined class="quick-action-btn" />
+            <Button as="router-link" to="/packages" label="Packages" icon="pi pi-box" severity="secondary" outlined class="quick-action-btn" />
+            <Button as="router-link" to="/reports" label="Reports" icon="pi pi-chart-bar" severity="secondary" outlined class="quick-action-btn" />
           </template>
-          <Button as="router-link" to="/tasks" label="Log Task" icon="pi pi-plus" />
         </div>
       </template>
     </Card>
@@ -81,10 +83,10 @@
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import { onMounted, reactive } from 'vue';
-import { useAuthStore } from '../stores/auth';
 import commissionService from '../services/commissionService';
 import taskService from '../services/taskService';
 import userService from '../services/userService';
+import { useAuthStore } from '../stores/auth';
 
 const authStore  = useAuthStore();
 const stats      = reactive({ activeEmployees: null });
@@ -128,6 +130,14 @@ onMounted(async () => {
 <style scoped>
 .dashboard-page { max-width: 1200px; margin: 0 auto; }
 
+.dashboard-greeting {
+  font-size: clamp(1.4rem, 5vw, 1.9rem);
+  font-weight: 700;
+  color: #1e1e2e;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
 .stat-card {
   background: white;
   border-radius: 10px;
@@ -167,5 +177,22 @@ onMounted(async () => {
 .stat-note {
   font-size: 0.76rem;
   color: #aaa;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.quick-action-btn {
+  justify-content: center;
+  min-height: 44px;
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .stat-value { font-size: 1.6rem; }
+  .quick-actions-grid { grid-template-columns: 1fr 1fr; }
 }
 </style>

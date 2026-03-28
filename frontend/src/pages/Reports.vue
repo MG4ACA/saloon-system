@@ -1,13 +1,16 @@
 <template>
   <div class="reports-page">
-    <div class="flex align-items-center justify-content-between mb-4">
-      <h1 class="text-2xl font-bold text-900 m-0">📊 Reports & Analytics</h1>
+    <div class="page-header mb-3">
+      <div class="flex align-items-center gap-2">
+        <BackButton to="/dashboard" />
+        <h1 class="text-2xl font-bold text-900 m-0">📊 Reports & Analytics</h1>
+      </div>
       <!-- Date Range -->
-      <div class="flex gap-2 align-items-center">
+      <div class="date-filter">
         <label class="text-sm font-semibold text-600">From</label>
-        <DatePicker v-model="dateFrom" dateFormat="yy-mm-dd" class="w-9rem" @date-select="loadAll" />
+        <DatePicker v-model="dateFrom" dateFormat="yy-mm-dd" class="date-picker-input" @date-select="loadAll" />
         <label class="text-sm font-semibold text-600">To</label>
-        <DatePicker v-model="dateTo"   dateFormat="yy-mm-dd" class="w-9rem" @date-select="loadAll" />
+        <DatePicker v-model="dateTo"   dateFormat="yy-mm-dd" class="date-picker-input" @date-select="loadAll" />
         <Button icon="pi pi-refresh" text rounded @click="loadAll" :loading="loading" />
       </div>
     </div>
@@ -125,6 +128,7 @@ import TabView from 'primevue/tabview';
 import Tag from 'primevue/tag';
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, reactive, ref } from 'vue';
+import BackButton from '../components/BackButton.vue';
 import reportService from '../services/reportService';
 
 const toast = useToast();
@@ -232,6 +236,10 @@ onMounted(loadAll);
 
 <style scoped>
 .reports-page { max-width: 1300px; margin: 0 auto; }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
+.date-filter { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.date-picker-input { width: 9.5rem; }
+
 .chart-card { background: var(--p-surface-card); border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 
 .report-card {
@@ -251,4 +259,10 @@ onMounted(loadAll);
 .rc-label { font-size: .72rem; font-weight: 700; color: #888; letter-spacing:.06em; margin-bottom:.25rem; }
 .rc-value { font-size: 1.6rem; font-weight: 700; color: #1e1e2e; line-height:1; margin-bottom:.25rem; }
 .rc-note  { font-size: .76rem; color: #aaa; }
+
+@media (max-width: 768px) {
+  .date-filter { width: 100%; }
+  .date-picker-input { flex: 1; min-width: 0; }
+  .rc-value { font-size: 1.3rem; }
+}
 </style>

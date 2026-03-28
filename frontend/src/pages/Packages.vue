@@ -1,11 +1,14 @@
 <template>
   <div class="packages-page">
-    <div class="flex align-items-center justify-content-between mb-4">
-      <h1 class="text-2xl font-bold text-900 m-0">Service Packages</h1>
+    <div class="page-header mb-4">
+      <div class="flex align-items-center gap-2">
+        <BackButton to="/dashboard" />
+        <h1 class="text-2xl font-bold text-900 m-0">Service Packages</h1>
+      </div>
       <Button label="Add Package" icon="pi pi-plus" @click="openModal()" />
     </div>
 
-    <DataTable :value="packages" :loading="loading" stripedRows dataKey="id" class="p-datatable-sm">
+    <DataTable :value="packages" :loading="loading" stripedRows dataKey="id" class="p-datatable-sm desktop-table">
       <template #empty>No packages found.</template>
       <Column field="name" header="Package Name" sortable />
       <Column field="package_price" header="Package Price">
@@ -38,6 +41,33 @@
         </template>
       </Column>
     </DataTable>
+
+    <!-- Mobile card list -->
+    <div class="mobile-cards">
+      <div v-if="loading" class="text-center py-4 text-600"><i class="pi pi-spin pi-spinner" /> Loading...</div>
+      <div v-else-if="!packages.length" class="text-center py-4 text-400">No packages found.</div>
+      <div v-for="pkg in packages" :key="pkg.id" class="pkg-card">
+        <div class="pkg-card-top">
+          <div>
+            <div class="pkg-card-name">{{ pkg.name }}</div>
+            <div class="pkg-card-price">LKR {{ Number(pkg.package_price).toFixed(2) }}</div>
+          </div>
+          <Tag :value="pkg.is_active ? 'Active' : 'Inactive'" :severity="pkg.is_active ? 'success' : 'danger'" />
+        </div>
+        <div class="pkg-card-services">
+          <Tag v-for="svc in pkg.services" :key="svc.id" :value="svc.name" severity="secondary" class="mr-1 mb-1" />
+          <span v-if="!pkg.services?.length" class="text-400 text-sm">—</span>
+        </div>
+        <div class="pkg-card-actions">
+          <Button icon="pi pi-pencil" label="Edit" size="small" outlined @click="openModal(pkg)" />
+          <Button
+            :icon="pkg.is_active ? 'pi pi-ban' : 'pi pi-check-circle'"
+            :label="pkg.is_active ? 'Deactivate' : 'Activate'"
+            :severity="pkg.is_active ? 'danger' : 'success'"
+            size="small" outlined @click="toggleStatus(pkg)" />
+        </div>
+      </div>
+    </div>
 
     <!-- Add/Edit Dialog -->
     <Dialog v-model:visible="showModal" :header="editTarget ? 'Edit Package' : 'Create Package'" :style="{ width: '520px' }" modal>
@@ -90,6 +120,7 @@ import Tag from 'primevue/tag';
 import Textarea from 'primevue/textarea';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, reactive, ref } from 'vue';
+import BackButton from '../components/BackButton.vue';
 import serviceService from '../services/serviceService';
 
 const toast = useToast();
@@ -168,6 +199,27 @@ onMounted(fetchData);
 
 <style scoped>
 .packages-page { max-width: 1100px; margin: 0 auto; }
+.page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
 .field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
 .field label { font-size: 0.85rem; font-weight: 600; color: #555; }
+
+.desktop-table { display: block; }
+.mobile-cards  { display: none; }
+@media (max-width: 768px) {
+  .desktop-table { display: none !important; }
+  .mobile-cards  { display: block; }
+}
+
+.pkg-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.pkg-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.4rem; }
+.pkg-card-name { font-weight: 600; font-size: 0.95rem; color: #1e1e2e; }
+.pkg-card-price { font-size: 0.8rem; color: #555; margin-top: 2px; }
+.pkg-card-services { margin-bottom: 0.6rem; }
+.pkg-card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 </style>

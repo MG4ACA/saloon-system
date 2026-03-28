@@ -41,6 +41,8 @@
         <span class="user-name desktop-only">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</span>
         <span class="user-role desktop-only">{{ authStore.user?.role }}</span>
         <Button label="Logout" icon="pi pi-sign-out" severity="danger" size="small" outlined @click="logout" class="desktop-only" aria-label="Logout" />
+        <!-- Mobile: icon-only logout always visible -->
+        <Button icon="pi pi-sign-out" severity="danger" text rounded @click="logout" class="mobile-only mobile-logout-btn" aria-label="Logout" />
         <!-- Hamburger button — mobile only -->
         <button
           class="hamburger mobile-only"
@@ -73,6 +75,26 @@
         </div>
       </div>
     </Transition>
+
+    <!-- Bottom nav — mobile only -->
+    <nav v-if="isAuthenticated" class="bottom-nav mobile-only" aria-label="Bottom navigation">
+      <router-link to="/dashboard" class="bottom-nav-item" active-class="active">
+        <i class="pi pi-home" />
+        <span>Home</span>
+      </router-link>
+      <router-link to="/tasks" class="bottom-nav-item" active-class="active">
+        <i class="pi pi-list" />
+        <span>Tasks</span>
+      </router-link>
+      <router-link to="/commissions" class="bottom-nav-item" active-class="active">
+        <i class="pi pi-wallet" />
+        <span>Commission</span>
+      </router-link>
+      <button class="bottom-nav-item" :class="{ active: mobileNavOpen }" @click.stop="mobileNavOpen = !mobileNavOpen" aria-label="More menu">
+        <i :class="mobileNavOpen ? 'pi pi-times' : 'pi pi-th-large'" />
+        <span>More</span>
+      </button>
+    </nav>
 
     <!-- Main page content -->
     <main :class="{ 'with-nav': isAuthenticated }">
@@ -188,6 +210,11 @@ body {
   text-transform: capitalize;
 }
 
+/* Mobile logout icon */
+.mobile-logout-btn {
+  color: #f87171 !important;
+}
+
 /* Hamburger */
 .hamburger {
   background: transparent;
@@ -198,6 +225,8 @@ body {
   padding: 0.4rem;
   border-radius: 6px;
   display: none;
+  min-width: 44px;
+  min-height: 44px;
   transition: background 0.15s;
 }
 .hamburger:hover { background: rgba(255,255,255,0.15); }
@@ -250,7 +279,41 @@ body {
 @media (min-width: 769px) {
   .mobile-only  { display: none !important; }
   .mobile-nav-panel { display: none !important; }
+  .bottom-nav   { display: none !important; }
 }
+
+/* Bottom navigation bar */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: #1e1e2e;
+  display: flex;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.25);
+  height: 60px;
+}
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}.bottom-nav-item i { font-size: 1.1rem; }
+.bottom-nav-item:hover, .bottom-nav-item.active { color: #a5b4fc; }
 
 main {
   flex: 1;
@@ -259,7 +322,7 @@ main {
 main.with-nav { min-height: calc(100vh - 60px); }
 
 @media (max-width: 768px) {
-  main { padding: 1rem; }
+  main { padding: 1rem 1rem 80px; /* extra bottom padding for bottom nav */ }
 }
 </style>
 

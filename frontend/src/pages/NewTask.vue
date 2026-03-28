@@ -98,7 +98,7 @@
         </div>
 
         <Message v-if="formError" severity="error" class="mb-2">{{ formError }}</Message>
-        <div class="flex justify-content-end gap-2 mt-3">
+        <div class="flex justify-content-end gap-2 mt-3 form-actions">
           <Button label="Cancel" severity="secondary" outlined type="button" @click="$router.push('/tasks')" />
           <Button label="Create Task" icon="pi pi-check" type="submit" :loading="submitting" />
         </div>
@@ -259,4 +259,13 @@ onMounted(async () => {
 .card { background: var(--p-surface-card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 .field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.5rem; }
 .field label { font-size: 0.85rem; font-weight: 600; color: #555; }
+
+@media (max-width: 768px) {
+  .card { padding: 1rem; border-radius: 8px; }
+  /* Make col-6 fields stack on mobile */
+  :deep(.grid > .col-6) { width: 100%; flex: 0 0 100%; max-width: 100%; }
+  /* Form submit buttons: full width on mobile */
+  .form-actions { flex-direction: column-reverse; }
+  .form-actions .p-button { width: 100%; justify-content: center; }
+}
 </style>

@@ -1,7 +1,10 @@
 <template>
   <div class="commissions-page">
-    <div class="flex align-items-center justify-content-between mb-4">
-      <h1 class="text-2xl font-bold text-900 m-0">💰 Commissions</h1>
+    <div class="page-header mb-3">
+      <div class="flex align-items-center gap-2">
+        <BackButton to="/dashboard" />
+        <h1 class="text-2xl font-bold text-900 m-0">💰 Commissions</h1>
+      </div>
       <!-- Employee selector — admin only -->
       <Select
         v-if="isAdmin"
@@ -60,7 +63,7 @@
     <!-- Per-service breakdown -->
     <div class="card">
       <h2 class="text-lg font-bold mb-3">Breakdown by Service</h2>
-      <DataTable :value="breakdown" :loading="loading" dataKey="serviceName" class="p-datatable-sm" stripedRows>
+      <DataTable :value="breakdown" :loading="loading" dataKey="serviceName" class="p-datatable-sm desktop-table" stripedRows>
         <template #empty>No commission data for this period.</template>
         <Column field="serviceName" header="Service" />
         <Column header="Commission Rate">
@@ -77,6 +80,24 @@
           </template>
         </Column>
       </DataTable>
+
+      <!-- Mobile card list -->
+      <div class="mobile-cards">
+        <div v-if="loading" class="text-center py-4 text-600"><i class="pi pi-spin pi-spinner" /> Loading...</div>
+        <div v-else-if="!breakdown.length" class="text-center py-4 text-400">No commission data for this period.</div>
+        <div v-for="row in breakdown" :key="row.serviceName" class="comm-card">
+          <div class="comm-card-top">
+            <div class="comm-card-service">{{ row.serviceName }}</div>
+            <span class="font-bold text-green-600">LKR {{ Number(row.totalEarned).toFixed(2) }}</span>
+          </div>
+          <div class="comm-card-meta">
+            <span v-if="row.commissionType === 'percentage'">{{ row.commissionValue }}% commission</span>
+            <span v-else-if="row.commissionType === 'fixed'">LKR {{ row.commissionValue }} flat</span>
+            <span v-else class="text-400">No rule</span>
+            <span>• {{ row.taskCount }} tasks</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -87,9 +108,10 @@ import DataTable from 'primevue/datatable';
 import Select from 'primevue/select';
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, reactive, ref } from 'vue';
-import { useAuthStore } from '../stores/auth';
+import BackButton from '../components/BackButton.vue';
 import api from '../services/api';
 import commissionService from '../services/commissionService';
+import { useAuthStore } from '../stores/auth';
 
 const toast   = useToast();
 const auth    = useAuthStore();
@@ -159,6 +181,7 @@ onMounted(async () => {
 
 <style scoped>
 .commissions-page { max-width: 1100px; margin: 0 auto; }
+.page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
 .filters-bar { background: var(--p-surface-card); border-radius: 10px; padding: 0.75rem 1rem; }
 .card { background: var(--p-surface-card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 
@@ -179,4 +202,23 @@ onMounted(async () => {
 .summary-label { font-size: 0.72rem; font-weight: 700; color: #888; letter-spacing: .06em; margin-bottom: .25rem; }
 .summary-value { font-size: 1.6rem; font-weight: 700; color: #1e1e2e; line-height: 1; margin-bottom: .25rem; }
 .summary-note  { font-size: 0.76rem; color: #aaa; }
+
+.desktop-table { display: block; }
+.mobile-cards  { display: none; }
+@media (max-width: 768px) {
+  .desktop-table { display: none !important; }
+  .mobile-cards  { display: block; margin-top: 0.75rem; }
+  .summary-value { font-size: 1.3rem; }
+}
+
+.comm-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.comm-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
+.comm-card-service { font-weight: 600; font-size: 0.95rem; color: #1e1e2e; }
+.comm-card-meta { font-size: 0.78rem; color: #888; display: flex; gap: 0.5rem; flex-wrap: wrap; }
 </style>
