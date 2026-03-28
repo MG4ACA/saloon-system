@@ -18,7 +18,7 @@ const Report = {
          AND DATE(created_at) BETWEEN ? AND ?
        GROUP BY DATE(created_at)
        ORDER BY date ASC`,
-      [from, to]
+      [from, to],
     );
 
     const [totals] = await pool.query(
@@ -30,7 +30,7 @@ const Report = {
        WHERE status = 'completed'
          AND is_deleted = 0
          AND DATE(created_at) BETWEEN ? AND ?`,
-      [from, to]
+      [from, to],
     );
 
     return { daily, totals: totals[0] };
@@ -43,8 +43,7 @@ const Report = {
     const [rows] = await pool.query(
       `SELECT
          u.id                                  AS employeeId,
-         u.firstName,
-         u.lastName,
+         u.name,
          COUNT(t.id)                           AS tasksCompleted,
          COALESCE(SUM(t.price), 0)             AS totalRevenue,
          COALESCE(SUM(c.commission_amount), 0) AS totalCommission
@@ -55,10 +54,10 @@ const Report = {
          AND t.is_deleted = 0
          AND DATE(t.created_at) BETWEEN ? AND ?
        LEFT JOIN commissions c ON c.task_id = t.id
-       WHERE u.role = 'employee' AND u.isActive = 1
-       GROUP BY u.id, u.firstName, u.lastName
+       WHERE u.role = 'employee' AND u.status = 'active' AND u.is_deleted = 0
+       GROUP BY u.id, u.name
        ORDER BY totalRevenue DESC`,
-      [from, to]
+      [from, to],
     );
     return rows;
   },
@@ -87,7 +86,7 @@ const Report = {
        GROUP BY s.id, s.name, sc.name
        ORDER BY taskCount DESC
        LIMIT 20`,
-      [from, to]
+      [from, to],
     );
     return rows;
   },
