@@ -107,8 +107,8 @@ import { useAuthStore } from '../stores/auth';
 import taskService from '../services/taskService';
 import api from '../services/api';
 
-const confirm = useConfirm();
 const toast   = useToast();
+const confirm = useConfirm();
 const auth    = useAuthStore();
 const isAdmin = computed(() => auth.user?.role === 'admin');
 
@@ -182,11 +182,11 @@ const changeStatus = async (task, status) => {
 
 const confirmComplete = (task) => {
   confirm.require({
-    message: 'Mark this task as completed? This will calculate the commission.',
+    message: `Mark this task as completed? This will trigger commission calculation.`,
     header: 'Complete Task',
     icon: 'pi pi-check-circle',
     acceptLabel: 'Complete',
-    rejectLabel: 'Not yet',
+    rejectLabel: 'Back',
     acceptClass: 'p-button-success',
     accept: () => changeStatus(task, 'completed'),
   });
@@ -194,11 +194,11 @@ const confirmComplete = (task) => {
 
 const confirmCancel = (task) => {
   confirm.require({
-    message: 'Are you sure you want to cancel this task? This cannot be undone.',
+    message: `Cancel this task? This action cannot be undone.`,
     header: 'Cancel Task',
     icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Yes, cancel it',
-    rejectLabel: 'Keep task',
+    acceptLabel: 'Yes, Cancel',
+    rejectLabel: 'Keep',
     acceptClass: 'p-button-danger',
     accept: () => changeStatus(task, 'cancelled'),
   });

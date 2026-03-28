@@ -42,7 +42,7 @@
           <div class="stat-icon" style="background:#fff4e8">💰</div>
           <div>
             <div class="stat-label">TODAY'S REVENUE</div>
-            <div class="stat-value">₹{{ Number(summary.todayRevenue ?? 0).toFixed(0) }}</div>
+            <div class="stat-value">LKR {{ Number(summary.todayRevenue ?? 0).toFixed(0) }}</div>
             <div class="stat-note">From {{ summary.todayCount ?? 0 }} tasks today</div>
           </div>
         </div>
