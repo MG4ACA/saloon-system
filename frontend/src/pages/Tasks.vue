@@ -10,8 +10,25 @@
 
     <!-- Filters -->
     <div class="filters-bar flex flex-wrap gap-2 mb-3 align-items-center">
-      <DatePicker v-model="filterDate" dateFormat="yy-mm-dd" placeholder="Filter by date" showClear class="filter-input" @date-select="loadTasks" @clear-click="loadTasks" />
-      <Select v-model="filterStatus" :options="statusOptions" option-label="label" option-value="value" placeholder="All statuses" show-clear class="filter-input" @change="loadTasks" />
+      <DatePicker
+        v-model="filterDate"
+        dateFormat="yy-mm-dd"
+        placeholder="Filter by date"
+        showClear
+        class="filter-input"
+        @date-select="loadTasks"
+        @clear-click="loadTasks"
+      />
+      <Select
+        v-model="filterStatus"
+        :options="statusOptions"
+        option-label="label"
+        option-value="value"
+        placeholder="All statuses"
+        show-clear
+        class="filter-input"
+        @change="loadTasks"
+      />
       <Select
         v-if="isAdmin"
         v-model="filterEmployeeId"
@@ -27,11 +44,21 @@
       <Button icon="pi pi-refresh" text rounded @click="loadTasks" title="Refresh" />
     </div>
 
-    <DataTable :value="tasks" :loading="loading" stripedRows dataKey="id" class="p-datatable-sm desktop-table" paginator :rows="20">
+    <DataTable
+      :value="tasks"
+      :loading="loading"
+      stripedRows
+      dataKey="id"
+      class="p-datatable-sm desktop-table"
+      paginator
+      :rows="20"
+    >
       <template #empty>No tasks found for the selected filters.</template>
 
       <Column v-if="isAdmin" header="Employee">
-        <template #body="{ data }">{{ data.employeeFirstName }} {{ data.employeeLastName }}</template>
+        <template #body="{ data }">
+          {{ data.employeeFirstName }} {{ data.employeeLastName }}
+        </template>
       </Column>
       <Column field="serviceName" header="Service" />
       <Column header="Customer">
@@ -53,7 +80,11 @@
       </Column>
       <Column header="Lock">
         <template #body="{ data }">
-          <i v-if="data.is_locked" class="pi pi-lock text-400" title="Locked — cannot be modified" />
+          <i
+            v-if="data.is_locked"
+            class="pi pi-lock text-400"
+            title="Locked — cannot be modified"
+          />
         </template>
       </Column>
       <Column header="Actions" style="width: 14rem">
@@ -80,7 +111,7 @@
               @click="confirmComplete(data)"
             />
             <Button
-              v-if="['pending','in_progress'].includes(data.status) && !data.is_locked"
+              v-if="['pending', 'in_progress'].includes(data.status) && !data.is_locked"
               label="Cancel"
               icon="pi pi-times"
               size="small"
@@ -96,14 +127,19 @@
 
     <!-- Mobile card list -->
     <div class="mobile-cards">
-      <div v-if="loading" class="text-center py-4 text-600"><i class="pi pi-spin pi-spinner" /> Loading...</div>
+      <div v-if="loading" class="text-center py-4 text-600">
+        <i class="pi pi-spin pi-spinner" />
+        Loading...
+      </div>
       <div v-else-if="!tasks.length" class="text-center py-4 text-400">No tasks found.</div>
       <div v-for="task in tasks" :key="task.id" class="task-card">
         <div class="task-card-top">
           <div>
             <div class="task-card-service">{{ task.serviceName }}</div>
             <div class="task-card-sub">
-              <span v-if="isAdmin">{{ task.employeeFirstName }} {{ task.employeeLastName }} &bull; </span>
+              <span v-if="isAdmin">
+                {{ task.employeeFirstName }} {{ task.employeeLastName }} &bull;
+              </span>
               <span v-if="task.customerName">{{ task.customerName }}</span>
               <span v-else class="text-400">Walk-in</span>
             </div>
@@ -118,16 +154,31 @@
         <div class="task-card-actions" v-if="!task.is_locked">
           <Button
             v-if="task.status === 'pending'"
-            label="Start" icon="pi pi-play" size="small" severity="info" outlined
-            @click="changeStatus(task, 'in_progress')" />
+            label="Start"
+            icon="pi pi-play"
+            size="small"
+            severity="info"
+            outlined
+            @click="changeStatus(task, 'in_progress')"
+          />
           <Button
             v-if="task.status === 'in_progress'"
-            label="Complete" icon="pi pi-check" size="small" severity="success" outlined
-            @click="confirmComplete(task)" />
+            label="Complete"
+            icon="pi pi-check"
+            size="small"
+            severity="success"
+            outlined
+            @click="confirmComplete(task)"
+          />
           <Button
-            v-if="['pending','in_progress'].includes(task.status)"
-            label="Cancel" icon="pi pi-times" size="small" severity="danger" outlined
-            @click="confirmCancel(task)" />
+            v-if="['pending', 'in_progress'].includes(task.status)"
+            label="Cancel"
+            icon="pi pi-times"
+            size="small"
+            severity="danger"
+            outlined
+            @click="confirmCancel(task)"
+          />
         </div>
       </div>
     </div>
@@ -149,33 +200,40 @@ import api from '../services/api';
 import taskService from '../services/taskService';
 import { useAuthStore } from '../stores/auth';
 
-const toast   = useToast();
+const toast = useToast();
 const confirm = useConfirm();
-const auth    = useAuthStore();
+const auth = useAuthStore();
 const isAdmin = computed(() => auth.user?.role === 'admin');
 
-const tasks          = ref([]);
-const employees      = ref([]);
-const loading        = ref(true);
-const filterDate     = ref(null);
-const filterStatus   = ref(null);
+const tasks = ref([]);
+const employees = ref([]);
+const loading = ref(true);
+const filterDate = ref(null);
+const filterStatus = ref(null);
 const filterEmployeeId = ref(null);
 
 const statusOptions = [
-  { label: 'Pending',     value: 'pending' },
+  { label: 'Pending', value: 'pending' },
   { label: 'In Progress', value: 'in_progress' },
-  { label: 'Completed',   value: 'completed' },
-  { label: 'Cancelled',   value: 'cancelled' },
+  { label: 'Completed', value: 'completed' },
+  { label: 'Cancelled', value: 'cancelled' },
 ];
 
-const statusLabel = (s) => ({ pending: 'Pending', in_progress: 'In Progress', completed: 'Completed', cancelled: 'Cancelled' }[s] || s);
+const statusLabel = (s) =>
+  ({
+    pending: 'Pending',
+    in_progress: 'In Progress',
+    completed: 'Completed',
+    cancelled: 'Cancelled',
+  })[s] || s;
 
-const statusSeverity = (s) => ({
-  pending: 'secondary',
-  in_progress: 'info',
-  completed: 'success',
-  cancelled: 'danger',
-}[s] || 'secondary');
+const statusSeverity = (s) =>
+  ({
+    pending: 'secondary',
+    in_progress: 'info',
+    completed: 'success',
+    cancelled: 'danger',
+  })[s] || 'secondary';
 
 const formatTime = (dt) => {
   if (!dt) return '—';
@@ -186,9 +244,11 @@ const loadTasks = async () => {
   loading.value = true;
   try {
     const params = { all: 'true' };
-    if (filterDate.value) params.date = filterDate.value instanceof Date
-      ? filterDate.value.toISOString().slice(0, 10)
-      : filterDate.value;
+    if (filterDate.value)
+      params.date =
+        filterDate.value instanceof Date
+          ? filterDate.value.toISOString().slice(0, 10)
+          : filterDate.value;
     if (filterStatus.value) params.status = filterStatus.value;
     if (filterEmployeeId.value) params.employeeId = filterEmployeeId.value;
 
@@ -208,13 +268,20 @@ const loadEmployees = async () => {
     employees.value = res.data.users
       .filter((u) => u.role === 'employee' && u.isActive)
       .map((u) => ({ label: `${u.firstName} ${u.lastName}`, value: u.id }));
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 };
 
 const changeStatus = async (task, status) => {
   try {
     await taskService.updateTaskStatus(task.id, status);
-    toast.add({ severity: 'success', summary: 'Updated', detail: `Task marked ${statusLabel(status)}.`, life: 3000 });
+    toast.add({
+      severity: 'success',
+      summary: 'Updated',
+      detail: `Task marked ${statusLabel(status)}.`,
+      life: 3000,
+    });
     await loadTasks();
   } catch (e) {
     const msg = e.response?.data?.error || 'Failed to update status';
@@ -252,45 +319,29 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.tasks-page { max-width: 1300px; margin: 0 auto; }
-.page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
-.filters-bar { background: var(--p-surface-card); border-radius: 10px; padding: 0.75rem 1rem; }
-.filter-input { min-width: 160px; }
+.tasks-page {
+  max-width: 1300px;
+  margin: 0 auto;
+}
 
 /* Desktop: show table, hide cards */
-.desktop-table { display: block; }
-.mobile-cards  { display: none; }
+.desktop-table {
+  display: block;
+}
+.mobile-cards {
+  display: none;
+}
 
 @media (max-width: 768px) {
-  .desktop-table { display: none !important; }
-  .mobile-cards  { display: block; }
-  .filter-input  { min-width: 0; flex: 1; }
+  .desktop-table {
+    display: none !important;
+  }
+  .mobile-cards {
+    display: block;
+  }
+  .filter-input {
+    min-width: 0;
+    flex: 1;
+  }
 }
-
-.task-card {
-  background: white;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-}
-.task-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-.task-card-service { font-weight: 600; font-size: 0.95rem; color: #1e1e2e; }
-.task-card-sub { font-size: 0.78rem; color: #888; margin-top: 2px; }
-.task-card-meta {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.8rem;
-  color: #666;
-  margin-bottom: 0.6rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.task-card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 </style>

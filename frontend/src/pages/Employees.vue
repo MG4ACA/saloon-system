@@ -33,11 +33,16 @@
       </Column>
       <Column field="isActive" header="Status">
         <template #body="{ data }">
-          <Tag :value="data.isActive ? 'Active' : 'Disabled'" :severity="data.isActive ? 'success' : 'danger'" />
+          <Tag
+            :value="data.isActive ? 'Active' : 'Disabled'"
+            :severity="data.isActive ? 'success' : 'danger'"
+          />
         </template>
       </Column>
       <Column field="lastLogin" header="Last Login">
-        <template #body="{ data }">{{ data.lastLogin ? formatDate(data.lastLogin) : 'Never' }}</template>
+        <template #body="{ data }">
+          {{ data.lastLogin ? formatDate(data.lastLogin) : 'Never' }}
+        </template>
       </Column>
       <Column header="Actions" style="width: 9rem">
         <template #body="{ data }">
@@ -54,7 +59,10 @@
 
     <!-- Mobile card list -->
     <div class="mobile-cards">
-      <div v-if="loading" class="text-center py-4 text-600"><i class="pi pi-spin pi-spinner" /> Loading...</div>
+      <div v-if="loading" class="text-center py-4 text-600">
+        <i class="pi pi-spin pi-spinner" />
+        Loading...
+      </div>
       <div v-else-if="!employees.length" class="text-center py-4 text-400">No employees found.</div>
       <div v-for="emp in employees" :key="emp.id" class="emp-card">
         <div class="emp-card-top">
@@ -64,22 +72,34 @@
           </div>
           <div class="flex gap-1 align-items-center">
             <Tag :value="emp.role" :severity="emp.role === 'admin' ? 'info' : 'secondary'" />
-            <Tag :value="emp.isActive ? 'Active' : 'Disabled'" :severity="emp.isActive ? 'success' : 'danger'" />
+            <Tag
+              :value="emp.isActive ? 'Active' : 'Disabled'"
+              :severity="emp.isActive ? 'success' : 'danger'"
+            />
           </div>
         </div>
-        <div class="emp-card-meta">Last login: {{ emp.lastLogin ? formatDate(emp.lastLogin) : 'Never' }}</div>
+        <div class="emp-card-meta">
+          Last login: {{ emp.lastLogin ? formatDate(emp.lastLogin) : 'Never' }}
+        </div>
         <div class="emp-card-actions">
           <Button
             :label="emp.isActive ? 'Disable' : 'Enable'"
             :severity="emp.isActive ? 'danger' : 'success'"
-            size="small" outlined
-            @click="confirmToggle(emp)" />
+            size="small"
+            outlined
+            @click="confirmToggle(emp)"
+          />
         </div>
       </div>
     </div>
 
     <!-- Add Employee Dialog -->
-    <Dialog v-model:visible="showAddModal" header="Add New Employee" :style="{ width: '480px' }" modal>
+    <Dialog
+      v-model:visible="showAddModal"
+      header="Add New Employee"
+      :style="{ width: '480px' }"
+      modal
+    >
       <form @submit.prevent="submitAdd">
         <div class="grid">
           <div class="col-6 field">
@@ -92,20 +112,45 @@
           </div>
           <div class="col-12 field">
             <label>Email *</label>
-            <InputText v-model="form.email" type="email" placeholder="employee@salon.com" class="w-full" required />
+            <InputText
+              v-model="form.email"
+              type="email"
+              placeholder="employee@salon.com"
+              class="w-full"
+              required
+            />
           </div>
           <div class="col-12 field">
             <label>Password *</label>
-            <Password v-model="form.password" placeholder="Minimum 6 characters" class="w-full" :feedback="false" toggleMask required />
+            <Password
+              v-model="form.password"
+              placeholder="Minimum 6 characters"
+              class="w-full"
+              :feedback="false"
+              toggleMask
+              required
+            />
           </div>
           <div class="col-12 field">
             <label>Role</label>
-            <Select v-model="form.role" :options="roleOptions" option-label="label" option-value="value" class="w-full" />
+            <Select
+              v-model="form.role"
+              :options="roleOptions"
+              option-label="label"
+              option-value="value"
+              class="w-full"
+            />
           </div>
         </div>
         <Message v-if="formError" severity="error" class="mb-2">{{ formError }}</Message>
         <div class="flex justify-content-end gap-2 mt-3">
-          <Button label="Cancel" severity="secondary" outlined @click="showAddModal = false" type="button" />
+          <Button
+            label="Cancel"
+            severity="secondary"
+            outlined
+            @click="showAddModal = false"
+            type="button"
+          />
           <Button label="Add Employee" icon="pi pi-check" type="submit" :loading="formLoading" />
         </div>
       </form>
@@ -143,7 +188,13 @@ const roleOptions = [
   { label: 'Admin', value: 'admin' },
 ];
 
-const emptyForm = () => ({ firstName: '', lastName: '', email: '', password: '', role: 'employee' });
+const emptyForm = () => ({
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  role: 'employee',
+});
 const form = reactive(emptyForm());
 
 const formatDate = (dt) =>
@@ -155,7 +206,12 @@ const fetchEmployees = async () => {
     const res = await userService.getAll();
     employees.value = res.data.users;
   } catch (e) {
-    toast.add({ severity: 'error', summary: 'Error', detail: e.response?.data?.error || 'Failed to load employees', life: 4000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: e.response?.data?.error || 'Failed to load employees',
+      life: 4000,
+    });
   } finally {
     loading.value = false;
   }
@@ -172,12 +228,19 @@ const submitAdd = async () => {
   formError.value = '';
   try {
     await userService.register(form);
-    toast.add({ severity: 'success', summary: 'Employee Added', detail: `${form.firstName} ${form.lastName} added successfully.`, life: 3000 });
+    toast.add({
+      severity: 'success',
+      summary: 'Employee Added',
+      detail: `${form.firstName} ${form.lastName} added successfully.`,
+      life: 3000,
+    });
     showAddModal.value = false;
     await fetchEmployees();
   } catch (e) {
     const details = e.response?.data?.details;
-    formError.value = details ? details.join(' ') : (e.response?.data?.error || 'Failed to add employee.');
+    formError.value = details
+      ? details.join(' ')
+      : e.response?.data?.error || 'Failed to add employee.';
   } finally {
     formLoading.value = false;
   }
@@ -192,10 +255,20 @@ const confirmToggle = (emp) => {
     accept: async () => {
       try {
         await userService.updateStatus(emp.id, !emp.isActive);
-        toast.add({ severity: 'success', summary: 'Updated', detail: `Employee ${emp.isActive ? 'disabled' : 'enabled'}.`, life: 3000 });
+        toast.add({
+          severity: 'success',
+          summary: 'Updated',
+          detail: `Employee ${emp.isActive ? 'disabled' : 'enabled'}.`,
+          life: 3000,
+        });
         await fetchEmployees();
       } catch (e) {
-        toast.add({ severity: 'error', summary: 'Error', detail: e.response?.data?.error || 'Failed to update status', life: 4000 });
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: e.response?.data?.error || 'Failed to update status',
+          life: 4000,
+        });
       }
     },
   });
@@ -205,29 +278,24 @@ onMounted(fetchEmployees);
 </script>
 
 <style scoped>
-.employees-page { max-width: 1200px; margin: 0 auto; }
-.page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
-.field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.25rem; }
-.field label { font-size: 0.85rem; font-weight: 600; color: #555; }
+.employees-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-.desktop-table { display: block; }
-.mobile-cards  { display: none; }
+.desktop-table {
+  display: block;
+}
+.mobile-cards {
+  display: none;
+}
 
 @media (max-width: 768px) {
-  .desktop-table { display: none !important; }
-  .mobile-cards  { display: block; }
+  .desktop-table {
+    display: none !important;
+  }
+  .mobile-cards {
+    display: block;
+  }
 }
-
-.emp-card {
-  background: white;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-}
-.emp-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.4rem; }
-.emp-card-name { font-weight: 600; font-size: 0.95rem; color: #1e1e2e; }
-.emp-card-email { font-size: 0.78rem; color: #888; }
-.emp-card-meta { font-size: 0.78rem; color: #aaa; margin-bottom: 0.6rem; }
-.emp-card-actions { display: flex; gap: 0.5rem; }
 </style>

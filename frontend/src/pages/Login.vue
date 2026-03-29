@@ -2,7 +2,7 @@
   <div class="login-page">
     <div class="login-card">
       <div class="login-header">
-        <span class="login-logo">✂️</span>
+        <img src="/logo.png" alt="Salon POS Logo" class="login-logo" />
         <h1>Salon POS</h1>
         <p>Sign in to your account</p>
       </div>
@@ -115,16 +115,19 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 50%, #1a1a2e 100%);
+  background: linear-gradient(150deg, #fff1f1 0%, #fadadd 40%, #f5c6c6 100%);
 }
 
 .login-card {
-  background: white;
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  width: 380px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.75rem 2.25rem;
+  width: 400px;
   max-width: 95vw;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 20px 60px rgba(238, 134, 134, 0.22),
+    0 4px 16px rgba(238, 134, 134, 0.12);
+  border: 1px solid #f5c6c6;
 }
 
 .login-header {
@@ -133,27 +136,35 @@ const handleLogin = async () => {
 }
 
 .login-logo {
-  font-size: 2.5rem;
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
   display: block;
-  margin-bottom: 0.5rem;
+  margin: 0 auto 0.75rem;
+  border-radius: 50%;
+  padding: 10px;
+  background: #fadadd;
+  border: 2px solid #f5c6c6;
 }
 
 .login-header h1 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #1e1e2e;
-  margin: 0 0 0.25rem 0;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #4a1d1d;
+  margin: 0 0 0.3rem 0;
+  letter-spacing: -0.01em;
 }
 
 .login-header p {
-  color: #888;
+  color: #945f5f;
   font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
 .field {
@@ -162,24 +173,26 @@ const handleLogin = async () => {
   gap: 0.4rem;
 }
 .field label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #555;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #945f5f;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .demo-credentials {
-  margin-top: 1.5rem;
+  margin-top: 1.6rem;
   padding-top: 1.25rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #f5c6c6;
 }
 
 .demo-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #aaa;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #bf8a8a;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 0 0 0.6rem 0;
+  letter-spacing: 0.07em;
+  margin: 0 0 0.65rem 0;
   text-align: center;
 }
 
@@ -193,45 +206,47 @@ const handleLogin = async () => {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0.5rem 0.65rem;
+  padding: 0.55rem 0.7rem;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border: 1px solid #f5c6c6;
+  background: #fff9f9;
   cursor: pointer;
   transition:
-    background 0.15s,
-    border-color 0.15s;
+    background 0.18s,
+    border-color 0.18s,
+    box-shadow 0.18s;
   text-align: left;
 }
 
 .demo-btn:hover {
-  background: #f0f4ff;
-  border-color: #a5b4fc;
+  background: #fadadd;
+  border-color: #ee8686;
+  box-shadow: 0 2px 8px rgba(238, 134, 134, 0.2);
 }
 
 .demo-btn.admin {
-  border-color: #fde68a;
-  background: #fffbeb;
+  border-color: #ee8686;
+  background: #fff1f1;
 }
 
 .demo-btn.admin:hover {
-  background: #fef3c7;
-  border-color: #f59e0b;
+  background: #fadadd;
+  border-color: #d97373;
 }
 
 .demo-role {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #374151;
+  color: #4a1d1d;
 }
 
 .demo-btn.admin .demo-role {
-  color: #92400e;
+  color: #d97373;
 }
 
 .demo-email {
   font-size: 0.7rem;
-  color: #9ca3af;
+  color: #bf8a8a;
   margin-top: 0.1rem;
 }
 </style>

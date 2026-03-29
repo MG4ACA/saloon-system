@@ -8,7 +8,13 @@
       <Button label="Add Package" icon="pi pi-plus" @click="openModal()" />
     </div>
 
-    <DataTable :value="packages" :loading="loading" stripedRows dataKey="id" class="p-datatable-sm desktop-table">
+    <DataTable
+      :value="packages"
+      :loading="loading"
+      stripedRows
+      dataKey="id"
+      class="p-datatable-sm desktop-table"
+    >
       <template #empty>No packages found.</template>
       <Column field="name" header="Package Name" sortable />
       <Column field="package_price" header="Package Price">
@@ -17,24 +23,34 @@
       <Column header="Included Services">
         <template #body="{ data }">
           <div class="flex flex-wrap gap-1">
-            <Tag v-for="svc in data.services" :key="svc.id" :value="svc.name" severity="secondary" />
+            <Tag
+              v-for="svc in data.services"
+              :key="svc.id"
+              :value="svc.name"
+              severity="secondary"
+            />
             <span v-if="!data.services?.length" class="text-400">—</span>
           </div>
         </template>
       </Column>
-      <Column field="is_active" header="Status" style="width:8rem">
+      <Column field="is_active" header="Status" style="width: 8rem">
         <template #body="{ data }">
-          <Tag :value="data.is_active ? 'Active' : 'Inactive'" :severity="data.is_active ? 'success' : 'danger'" />
+          <Tag
+            :value="data.is_active ? 'Active' : 'Inactive'"
+            :severity="data.is_active ? 'success' : 'danger'"
+          />
         </template>
       </Column>
-      <Column header="Actions" style="width:10rem">
+      <Column header="Actions" style="width: 10rem">
         <template #body="{ data }">
           <div class="flex gap-2">
             <Button icon="pi pi-pencil" size="small" text rounded @click="openModal(data)" />
             <Button
               :icon="data.is_active ? 'pi pi-ban' : 'pi pi-check-circle'"
               :severity="data.is_active ? 'danger' : 'success'"
-              size="small" text rounded
+              size="small"
+              text
+              rounded
               @click="toggleStatus(data)"
             />
           </div>
@@ -44,7 +60,10 @@
 
     <!-- Mobile card list -->
     <div class="mobile-cards">
-      <div v-if="loading" class="text-center py-4 text-600"><i class="pi pi-spin pi-spinner" /> Loading...</div>
+      <div v-if="loading" class="text-center py-4 text-600">
+        <i class="pi pi-spin pi-spinner" />
+        Loading...
+      </div>
       <div v-else-if="!packages.length" class="text-center py-4 text-400">No packages found.</div>
       <div v-for="pkg in packages" :key="pkg.id" class="pkg-card">
         <div class="pkg-card-top">
@@ -52,10 +71,19 @@
             <div class="pkg-card-name">{{ pkg.name }}</div>
             <div class="pkg-card-price">LKR {{ Number(pkg.package_price).toFixed(2) }}</div>
           </div>
-          <Tag :value="pkg.is_active ? 'Active' : 'Inactive'" :severity="pkg.is_active ? 'success' : 'danger'" />
+          <Tag
+            :value="pkg.is_active ? 'Active' : 'Inactive'"
+            :severity="pkg.is_active ? 'success' : 'danger'"
+          />
         </div>
         <div class="pkg-card-services">
-          <Tag v-for="svc in pkg.services" :key="svc.id" :value="svc.name" severity="secondary" class="mr-1 mb-1" />
+          <Tag
+            v-for="svc in pkg.services"
+            :key="svc.id"
+            :value="svc.name"
+            severity="secondary"
+            class="mr-1 mb-1"
+          />
           <span v-if="!pkg.services?.length" class="text-400 text-sm">—</span>
         </div>
         <div class="pkg-card-actions">
@@ -64,13 +92,21 @@
             :icon="pkg.is_active ? 'pi pi-ban' : 'pi pi-check-circle'"
             :label="pkg.is_active ? 'Deactivate' : 'Activate'"
             :severity="pkg.is_active ? 'danger' : 'success'"
-            size="small" outlined @click="toggleStatus(pkg)" />
+            size="small"
+            outlined
+            @click="toggleStatus(pkg)"
+          />
         </div>
       </div>
     </div>
 
     <!-- Add/Edit Dialog -->
-    <Dialog v-model:visible="showModal" :header="editTarget ? 'Edit Package' : 'Create Package'" :style="{ width: '520px' }" modal>
+    <Dialog
+      v-model:visible="showModal"
+      :header="editTarget ? 'Edit Package' : 'Create Package'"
+      :style="{ width: '520px' }"
+      modal
+    >
       <form @submit.prevent="submitForm">
         <div class="field">
           <label>Package Name *</label>
@@ -82,7 +118,14 @@
         </div>
         <div class="field">
           <label>Package Price (₹) *</label>
-          <InputNumber v-model="form.packagePrice" :min="0" mode="decimal" :min-fraction-digits="0" :max-fraction-digits="2" class="w-full" />
+          <InputNumber
+            v-model="form.packagePrice"
+            :min="0"
+            mode="decimal"
+            :min-fraction-digits="0"
+            :max-fraction-digits="2"
+            class="w-full"
+          />
         </div>
         <div class="field">
           <label>Included Services *</label>
@@ -99,8 +142,19 @@
         </div>
         <Message v-if="formError" severity="error" class="mb-2">{{ formError }}</Message>
         <div class="flex justify-content-end gap-2 mt-3">
-          <Button label="Cancel" severity="secondary" outlined @click="showModal = false" type="button" />
-          <Button :label="editTarget ? 'Update' : 'Create'" icon="pi pi-check" type="submit" :loading="formLoading" />
+          <Button
+            label="Cancel"
+            severity="secondary"
+            outlined
+            @click="showModal = false"
+            type="button"
+          />
+          <Button
+            :label="editTarget ? 'Update' : 'Create'"
+            icon="pi pi-check"
+            type="submit"
+            :loading="formLoading"
+          />
         </div>
       </form>
     </Dialog>
@@ -137,11 +191,19 @@ const form = reactive({ name: '', description: '', packagePrice: null, serviceId
 const fetchData = async () => {
   loading.value = true;
   try {
-    const [pkgRes, svcRes] = await Promise.all([serviceService.getPackages(), serviceService.getServices({ active: true })]);
+    const [pkgRes, svcRes] = await Promise.all([
+      serviceService.getPackages(),
+      serviceService.getServices({ active: true }),
+    ]);
     packages.value = pkgRes.data.packages;
     activeServices.value = svcRes.data.services.filter((s) => s.is_active);
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load packages', life: 4000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to load packages',
+      life: 4000,
+    });
   } finally {
     loading.value = false;
   }
@@ -169,16 +231,28 @@ const submitForm = async () => {
   try {
     if (editTarget.value) {
       await serviceService.updatePackage(editTarget.value.id, form);
-      toast.add({ severity: 'success', summary: 'Updated', detail: 'Package updated.', life: 3000 });
+      toast.add({
+        severity: 'success',
+        summary: 'Updated',
+        detail: 'Package updated.',
+        life: 3000,
+      });
     } else {
       await serviceService.createPackage(form);
-      toast.add({ severity: 'success', summary: 'Created', detail: 'Package created.', life: 3000 });
+      toast.add({
+        severity: 'success',
+        summary: 'Created',
+        detail: 'Package created.',
+        life: 3000,
+      });
     }
     showModal.value = false;
     await fetchData();
   } catch (e) {
     const details = e.response?.data?.details;
-    formError.value = details ? details.join(' ') : (e.response?.data?.error || 'Failed to save package.');
+    formError.value = details
+      ? details.join(' ')
+      : e.response?.data?.error || 'Failed to save package.';
   } finally {
     formLoading.value = false;
   }
@@ -187,10 +261,20 @@ const submitForm = async () => {
 const toggleStatus = async (pkg) => {
   try {
     await serviceService.setPackageStatus(pkg.id, !pkg.is_active);
-    toast.add({ severity: 'success', summary: 'Updated', detail: `Package ${pkg.is_active ? 'deactivated' : 'activated'}.`, life: 3000 });
+    toast.add({
+      severity: 'success',
+      summary: 'Updated',
+      detail: `Package ${pkg.is_active ? 'deactivated' : 'activated'}.`,
+      life: 3000,
+    });
     await fetchData();
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update status', life: 4000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to update status',
+      life: 4000,
+    });
   }
 };
 
@@ -198,28 +282,63 @@ onMounted(fetchData);
 </script>
 
 <style scoped>
-.packages-page { max-width: 1100px; margin: 0 auto; }
-.page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
-.field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
-.field label { font-size: 0.85rem; font-weight: 600; color: #555; }
+.packages-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
 
-.desktop-table { display: block; }
-.mobile-cards  { display: none; }
+.desktop-table {
+  display: block;
+}
+.mobile-cards {
+  display: none;
+}
 @media (max-width: 768px) {
-  .desktop-table { display: none !important; }
-  .mobile-cards  { display: block; }
+  .desktop-table {
+    display: none !important;
+  }
+  .mobile-cards {
+    display: block;
+  }
 }
 
 .pkg-card {
-  background: white;
-  border-radius: 10px;
+  background: #ffffff;
+  border-radius: 12px;
   padding: 1rem;
   margin-bottom: 0.75rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(238, 134, 134, 0.12);
+  border: 1px solid #f5c6c6;
 }
-.pkg-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.4rem; }
-.pkg-card-name { font-weight: 600; font-size: 0.95rem; color: #1e1e2e; }
-.pkg-card-price { font-size: 0.8rem; color: #555; margin-top: 2px; }
-.pkg-card-services { margin-bottom: 0.6rem; }
-.pkg-card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.pkg-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.pkg-card-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #4a1d1d;
+}
+.pkg-card-price {
+  font-size: 0.8rem;
+  color: #945f5f;
+  margin-top: 2px;
+}
+.pkg-card-services {
+  margin-bottom: 0.6rem;
+}
+.pkg-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
 </style>

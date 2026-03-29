@@ -26,7 +26,15 @@
           <!-- Price -->
           <div class="col-12 md:col-6 field">
             <label for="field-price">Price (LKR) *</label>
-            <InputNumber id="field-price" v-model="form.price" :min="0" mode="decimal" :max-fraction-digits="2" class="w-full" aria-required="true" />
+            <InputNumber
+              id="field-price"
+              v-model="form.price"
+              :min="0"
+              mode="decimal"
+              :max-fraction-digits="2"
+              class="w-full"
+              aria-required="true"
+            />
           </div>
 
           <!-- Customer lookup -->
@@ -46,7 +54,11 @@
 
             <!-- New customer name prompt -->
             <div v-if="customerFound === false" class="mt-2">
-              <InputText v-model="newCustomerName" placeholder="Enter customer name to create" class="w-full" />
+              <InputText
+                v-model="newCustomerName"
+                placeholder="Enter customer name to create"
+                class="w-full"
+              />
               <Button
                 label="Create customer"
                 icon="pi pi-user-plus"
@@ -67,11 +79,26 @@
           <!-- Discount -->
           <div class="col-6 field">
             <label for="field-discount-type">Discount Type</label>
-            <Select id="field-discount-type" v-model="form.discountType" :options="discountTypes" option-label="label" option-value="value" placeholder="None" class="w-full" show-clear />
+            <Select
+              id="field-discount-type"
+              v-model="form.discountType"
+              :options="discountTypes"
+              option-label="label"
+              option-value="value"
+              placeholder="None"
+              class="w-full"
+              show-clear
+            />
           </div>
           <div class="col-6 field">
             <label for="field-discount-val">Discount Value</label>
-            <InputNumber id="field-discount-val" v-model="form.discountValue" :min="0" :disabled="!form.discountType" class="w-full" />
+            <InputNumber
+              id="field-discount-val"
+              v-model="form.discountValue"
+              :min="0"
+              :disabled="!form.discountType"
+              class="w-full"
+            />
           </div>
 
           <!-- Start / End Time -->
@@ -87,19 +114,36 @@
           <!-- Status -->
           <div class="col-12 md:col-6 field">
             <label>Initial Status</label>
-            <Select v-model="form.status" :options="statusOptions" option-label="label" option-value="value" class="w-full" />
+            <Select
+              v-model="form.status"
+              :options="statusOptions"
+              option-label="label"
+              option-value="value"
+              class="w-full"
+            />
           </div>
 
           <!-- Notes -->
           <div class="col-12 field">
             <label>Notes</label>
-            <Textarea v-model="form.notes" class="w-full" rows="3" placeholder="Products used, observations..." />
+            <Textarea
+              v-model="form.notes"
+              class="w-full"
+              rows="3"
+              placeholder="Products used, observations..."
+            />
           </div>
         </div>
 
         <Message v-if="formError" severity="error" class="mb-2">{{ formError }}</Message>
         <div class="flex justify-content-end gap-2 mt-3 form-actions">
-          <Button label="Cancel" severity="secondary" outlined type="button" @click="$router.push('/tasks')" />
+          <Button
+            label="Cancel"
+            severity="secondary"
+            outlined
+            type="button"
+            @click="$router.push('/tasks')"
+          />
           <Button label="Create Task" icon="pi pi-check" type="submit" :loading="submitting" />
         </div>
       </form>
@@ -122,17 +166,17 @@ import { useRouter } from 'vue-router';
 import serviceService from '../services/serviceService';
 import taskService from '../services/taskService';
 
-const toast  = useToast();
+const toast = useToast();
 const router = useRouter();
 
-const services       = ref([]);
-const phoneInput     = ref('');
-const customerFound  = ref(null); // null = not searched, true = found, false = not found
-const resolvedCustomer  = ref(null);
-const newCustomerName   = ref('');
-const creatingCustomer  = ref(false);
-const submitting     = ref(false);
-const formError      = ref('');
+const services = ref([]);
+const phoneInput = ref('');
+const customerFound = ref(null); // null = not searched, true = found, false = not found
+const resolvedCustomer = ref(null);
+const newCustomerName = ref('');
+const creatingCustomer = ref(false);
+const submitting = ref(false);
+const formError = ref('');
 
 const discountTypes = [
   { label: 'Percentage (%)', value: 'percentage' },
@@ -170,7 +214,11 @@ const onServiceChange = () => {
 
 const lookupCustomer = async () => {
   const phone = phoneInput.value.trim();
-  if (!phone) { customerFound.value = null; resolvedCustomer.value = null; return; }
+  if (!phone) {
+    customerFound.value = null;
+    resolvedCustomer.value = null;
+    return;
+  }
   try {
     const res = await taskService.lookupCustomer(phone);
     if (res.data.found) {
@@ -189,12 +237,20 @@ const lookupCustomer = async () => {
 
 const createCustomer = async () => {
   if (!newCustomerName.value.trim()) {
-    toast.add({ severity: 'warn', summary: 'Name required', detail: 'Enter a customer name', life: 3000 });
+    toast.add({
+      severity: 'warn',
+      summary: 'Name required',
+      detail: 'Enter a customer name',
+      life: 3000,
+    });
     return;
   }
   creatingCustomer.value = true;
   try {
-    const res = await taskService.createCustomer({ phone: phoneInput.value.trim(), name: newCustomerName.value.trim() });
+    const res = await taskService.createCustomer({
+      phone: phoneInput.value.trim(),
+      name: newCustomerName.value.trim(),
+    });
     resolvedCustomer.value = res.data.customer;
     form.customerId = res.data.customer.id;
     customerFound.value = true;
@@ -206,7 +262,12 @@ const createCustomer = async () => {
       form.customerId = e.response.data.customer.id;
       customerFound.value = true;
     } else {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to create customer', life: 3000 });
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to create customer',
+        life: 3000,
+      });
     }
   } finally {
     creatingCustomer.value = false;
@@ -214,9 +275,18 @@ const createCustomer = async () => {
 };
 
 const submitTask = async () => {
-  if (!form.serviceId) { formError.value = 'Please select a service.'; return; }
-  if (!form.price && form.price !== 0) { formError.value = 'Price is required.'; return; }
-  if (!form.startTime) { formError.value = 'Start time is required.'; return; }
+  if (!form.serviceId) {
+    formError.value = 'Please select a service.';
+    return;
+  }
+  if (!form.price && form.price !== 0) {
+    formError.value = 'Price is required.';
+    return;
+  }
+  if (!form.startTime) {
+    formError.value = 'Start time is required.';
+    return;
+  }
 
   submitting.value = true;
   formError.value = '';
@@ -236,7 +306,9 @@ const submitTask = async () => {
     router.push('/tasks');
   } catch (e) {
     const details = e.response?.data?.details;
-    formError.value = details ? details.join(' ') : (e.response?.data?.error || 'Failed to create task.');
+    formError.value = details
+      ? details.join(' ')
+      : e.response?.data?.error || 'Failed to create task.';
   } finally {
     submitting.value = false;
   }
@@ -255,17 +327,46 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.new-task-page { max-width: 800px; margin: 0 auto; }
-.card { background: var(--p-surface-card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
-.field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.5rem; }
-.field label { font-size: 0.85rem; font-weight: 600; color: #555; }
+.new-task-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.card {
+  background: var(--p-surface-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+.field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #945f5f;
+}
 
 @media (max-width: 768px) {
-  .card { padding: 1rem; border-radius: 8px; }
+  .card {
+    padding: 1rem;
+    border-radius: 8px;
+  }
   /* Make col-6 fields stack on mobile */
-  :deep(.grid > .col-6) { width: 100%; flex: 0 0 100%; max-width: 100%; }
+  :deep(.grid > .col-6) {
+    width: 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
   /* Form submit buttons: full width on mobile */
-  .form-actions { flex-direction: column-reverse; }
-  .form-actions .p-button { width: 100%; justify-content: center; }
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+  .form-actions .p-button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>
